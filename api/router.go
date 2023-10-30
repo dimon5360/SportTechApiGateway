@@ -16,7 +16,10 @@ func InitRouter(ip string) Router {
 		engine: gin.Default(),
 		ip:     ip,
 	}
+
+	router.engine.LoadHTMLGlob("static/templates/*")
 	router.setupRouting()
+
 	return router
 }
 
