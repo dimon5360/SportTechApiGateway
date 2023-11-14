@@ -1,10 +1,10 @@
 package main
 
 import (
+	router "app/main/api"
+	"app/main/utils"
+	server "app/main/web"
 	"fmt"
-	router "main/core/api"
-	"main/core/utils"
-	server "main/core/web"
 )
 
 /// TODO:

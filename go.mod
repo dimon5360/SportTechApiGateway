@@ -1,4 +1,4 @@
-module main/core
+module app/main
 
 go 1.21.3
 

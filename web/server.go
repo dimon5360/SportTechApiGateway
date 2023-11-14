@@ -1,6 +1,6 @@
 package server
 
-import router "main/core/api"
+import router "app/main/api"
 
 type Server struct {
 	router router.Router
