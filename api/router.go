@@ -23,7 +23,13 @@ func InitRouter(ip string) Router {
 		ip:     ip,
 	}
 
+	router.engine.SetTrustedProxies([]string{"localhost"})
 	router.engine.LoadHTMLGlob("static/templates/*")
+
+	router.engine.StaticFile("/favicon.ico", "./resources/favicon.ico")
+	router.engine.StaticFile("/site.webmanifest", "./resources/site.webmanifest")
+	router.engine.StaticFile("/apple-touch-icon.png", "./resources/apple-touch-icon.png")
+
 	router.setupRouting()
 
 	conn, err := grpc.Dial("localhost:40402",
@@ -40,6 +46,7 @@ func InitRouter(ip string) Router {
 func (r *Router) setupRouting() {
 	r.engine.GET("/", Index)
 	r.engine.GET("/user/:id", r.GetUser)
+	r.engine.GET("/auth", r.AuthenticateUser)
 }
 
 func (r *Router) Run() {

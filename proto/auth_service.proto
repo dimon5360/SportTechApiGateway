@@ -8,18 +8,30 @@ import "google/protobuf/timestamp.proto";
 
 service AuthUsersService {
 
-    rpc GetUser(GetUserRequest) returns (User) {}
+    rpc CreateUser(CreateUserRequst) returns (UserInfoResponse) {}
+    rpc AuthUser(AuthUserRequest) returns (UserInfoResponse) {}
+    rpc GetUser(GetUserRequest) returns (UserInfoResponse) {}
+}
+
+message UserInfoResponse {
+    string id = 1;
+    string username = 2;
+    string email = 3;
+    google.protobuf.Timestamp created_at = 4;
+    google.protobuf.Timestamp updated_at = 5;
 }
 
 message GetUserRequest {
     string id = 1;
 }
 
-message User {
-    string id = 1;
-    string username = 2;
+message AuthUserRequest {
+    string email = 1;
+    string password = 2;
+}
+
+message CreateUserRequst {
+    string username = 1;
+    string email = 2;
     string password = 3;
-    string email = 4;
-    google.protobuf.Timestamp created_at = 5;
-    google.protobuf.Timestamp updated_at = 6;
 }
