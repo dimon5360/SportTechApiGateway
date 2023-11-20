@@ -2,7 +2,11 @@ module app/main
 
 go 1.21.3
 
-require github.com/gin-gonic/gin v1.9.1
+require (
+	github.com/dimon5360/SportTechProtos v0.0.0-20231120190338-d3ba656b4d18
+	github.com/gin-gonic/gin v1.9.1
+	google.golang.org/grpc v1.59.0
+)
 
 require (
 	github.com/bytedance/sonic v1.9.1 // indirect
@@ -29,7 +33,6 @@ require (
 	golang.org/x/sys v0.11.0 // indirect
 	golang.org/x/text v0.12.0 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20230822172742-b8732ec3820d // indirect
-	google.golang.org/grpc v1.59.0 // indirect
 	google.golang.org/protobuf v1.31.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )

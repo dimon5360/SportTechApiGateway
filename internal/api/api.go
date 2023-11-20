@@ -1,12 +1,12 @@
 package router
 
 import (
-	"app/main/proto"
 	"context"
 	"log"
 	"net/http"
 	"time"
 
+	proto "github.com/dimon5360/SportTechProtos/gen/go"
 	"github.com/gin-gonic/gin"
 )
 

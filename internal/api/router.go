@@ -1,9 +1,9 @@
 package router
 
 import (
-	"app/main/proto"
 	"log"
 
+	proto "github.com/dimon5360/SportTechProtos/gen/go"
 	"github.com/gin-gonic/gin"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
@@ -23,7 +23,7 @@ func InitRouter(ip string) Router {
 		ip:     ip,
 	}
 
-	router.engine.LoadHTMLGlob("static/templates/*")
+	router.engine.LoadHTMLGlob("../static/templates/*")
 	router.setupRouting()
 
 	conn, err := grpc.Dial("localhost:40402",

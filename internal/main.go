@@ -16,7 +16,7 @@ import (
 func main() {
 
 	env := utils.Init()
-	env.Load("env/app.env")
+	env.Load("../config/app.env")
 
 	fmt.Println("Core service v." + env.Value("VERSION_APP"))
 
