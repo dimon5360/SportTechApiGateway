@@ -3,7 +3,7 @@ package router
 import (
 	"log"
 
-	proto "github.com/dimon5360/SportTechProtos/gen/go"
+	proto "github.com/dimon5360/SportTechProtos/gen/go/proto"
 	"github.com/gin-gonic/gin"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
@@ -24,6 +24,8 @@ func InitRouter(ip string) Router {
 	}
 
 	router.engine.LoadHTMLGlob("../static/templates/*")
+	router.engine.StaticFile("/favicon.ico", "../resources/favicon.ico")
+	router.engine.Static("/resources", "../resources")
 	router.setupRouting()
 
 	conn, err := grpc.Dial("localhost:40402",
@@ -40,6 +42,7 @@ func InitRouter(ip string) Router {
 func (r *Router) setupRouting() {
 	r.engine.GET("/", Index)
 	r.engine.GET("/user/:id", r.GetUser)
+	r.engine.GET("/auth/", r.AuthenticateUser)
 }
 
 func (r *Router) Run() {

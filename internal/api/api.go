@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"time"
 
-	proto "github.com/dimon5360/SportTechProtos/gen/go"
+	proto "github.com/dimon5360/SportTechProtos/gen/go/proto"
 	"github.com/gin-gonic/gin"
 )
 
@@ -22,7 +22,7 @@ func Index(c *gin.Context) {
 func (r *Router) GetUser(c *gin.Context) {
 
 	type getUserRequest struct {
-		ID string `uri:"id" binding:"required,min=1"`
+		ID uint64 `uri:"id" binding:"required,min=1"`
 	}
 
 	var req getUserRequest
@@ -51,7 +51,7 @@ func (r *Router) GetUser(c *gin.Context) {
 func (r *Router) AuthenticateUser(c *gin.Context) {
 
 	type authUserRequest struct {
-		Email string `form:"email"`
+		Email    string `form:"email"`
 		Password string `form:"password"`
 	}
 
@@ -67,7 +67,7 @@ func (r *Router) AuthenticateUser(c *gin.Context) {
 	defer cancel()
 
 	res, err := r.grpc.AuthUser(ctx, &proto.AuthUserRequest{
-		Email: req.Email,
+		Email:    req.Email,
 		Password: req.Password,
 	})
 
