@@ -2,9 +2,11 @@ package router
 
 import (
 	"log"
+	"net/http"
 
 	proto "github.com/dimon5360/SportTechProtos/gen/go/proto"
 	"github.com/gin-gonic/gin"
+	cors "github.com/rs/cors/wrapper/gin"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
@@ -24,8 +26,14 @@ func InitRouter(ip string) Router {
 	}
 
 	router.engine.LoadHTMLGlob("../static/templates/*")
+
 	router.engine.StaticFile("/favicon.ico", "../resources/favicon.ico")
+	router.engine.StaticFile("/apple-touch-icon.png", "../resources/apple-touch-icon.png")
+	router.engine.StaticFile("/favicon-32x32.png", "../resources/favicon-32x32.png")
 	router.engine.Static("/resources", "../resources")
+
+	router.engine.Use(cors.Default())
+
 	router.setupRouting()
 
 	conn, err := grpc.Dial("localhost:40402",
@@ -41,6 +49,11 @@ func InitRouter(ip string) Router {
 
 func (r *Router) setupRouting() {
 	r.engine.GET("/", Index)
+	r.engine.GET("/ping", func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{
+			"message" : "hello user",
+		})
+	})
 	r.engine.GET("/user/:id", r.GetUser)
 	r.engine.GET("/auth/", r.AuthenticateUser)
 }
