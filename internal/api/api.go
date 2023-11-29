@@ -79,3 +79,38 @@ func (r *Router) AuthenticateUser(c *gin.Context) {
 
 	c.String(http.StatusOK, res.String())
 }
+
+// test url to create user http://localhost:40401/register?username=dmitry&email=dmitry@test.com&password=test123
+func (r *Router) CreateUser(c *gin.Context) {
+
+	type createUserRequest struct {
+		Username    string `form:"username"`
+		Email    	string `form:"email"`
+		Password 	string `form:"password"`
+	}
+
+	var req createUserRequest
+	if err := c.Bind(&req); err != nil {
+		c.JSON(http.StatusBadRequest, err)
+		return
+	}
+
+	log.Print(req)
+
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
+
+	res, err := r.grpc.CreateUser(ctx, &proto.CreateUserRequst{
+		Username: req.Username,
+		Email:    req.Email,
+		Password: req.Password,
+	})
+
+	if err != nil {
+		log.Printf("Creation user failed: %v", err)
+		c.String(http.StatusConflict, "User already exists")
+		return
+	}
+
+	c.String(http.StatusOK, res.String())
+}

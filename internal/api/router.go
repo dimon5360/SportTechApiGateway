@@ -56,6 +56,7 @@ func (r *Router) setupRouting() {
 	})
 	r.engine.GET("/user/:id", r.GetUser)
 	r.engine.GET("/auth/", r.AuthenticateUser)
+	r.engine.GET("/register/", r.CreateUser)
 }
 
 func (r *Router) Run() {
