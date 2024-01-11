@@ -7,7 +7,10 @@ require (
 	google.golang.org/grpc v1.59.0
 )
 
-require github.com/rs/cors v1.8.1 // indirect
+require (
+	github.com/rs/cors v1.8.1 // indirect
+	golang.org/x/sync v0.3.0 // indirect
+)
 
 require (
 	github.com/bytedance/sonic v1.10.2 // indirect
@@ -16,6 +19,7 @@ require (
 	github.com/dimon5360/SportTechProtos v0.0.0-20231120202612-bd234f6b6f94
 	github.com/gabriel-vasile/mimetype v1.4.3 // indirect
 	github.com/gin-contrib/sse v0.1.0 // indirect
+	github.com/gin-gonic/autotls v0.0.5
 	github.com/go-playground/locales v0.14.1 // indirect
 	github.com/go-playground/universal-translator v0.18.1 // indirect
 	github.com/go-playground/validator/v10 v10.16.0 // indirect

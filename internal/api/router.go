@@ -6,6 +6,7 @@ import (
 
 	proto "github.com/dimon5360/SportTechProtos/gen/go/proto"
 	"github.com/gin-gonic/gin"
+
 	cors "github.com/rs/cors/wrapper/gin"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
@@ -60,6 +61,9 @@ func (r *Router) setupRouting() {
 	r.engine.POST("/register", r.CreateUser)
 }
 
+var sslkey string = "../../private.key"
+var sslcert string = "../../test_server.crt"
+
 func (r *Router) Run() {
-	r.engine.Run(r.ip)
+	r.engine.RunTLS(r.ip, sslcert, sslkey)
 }
