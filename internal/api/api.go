@@ -57,7 +57,7 @@ func (r *Router) AuthenticateUser(c *gin.Context) {
 
 	var req authUserRequest
 	err := c.Bind(&req)
-	if  err != nil {
+	if err != nil {
 		c.JSON(http.StatusBadRequest, err)
 		return
 	}
@@ -75,13 +75,14 @@ func (r *Router) AuthenticateUser(c *gin.Context) {
 	if err != nil {
 		log.Printf("Authentication failed: %v", err)
 		c.JSON(http.StatusUnauthorized, gin.H{
-			"message" : "Authentication failed",
+			"message": "Authentication failed",
 		})
 		return
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"user_id" : res.Id,
+		"user_id": res.Id,
+		"user":    res.Username,
 	})
 }
 
@@ -89,9 +90,9 @@ func (r *Router) AuthenticateUser(c *gin.Context) {
 func (r *Router) CreateUser(c *gin.Context) {
 
 	type createUserRequest struct {
-		Username    string `json:"username"`
-		Email    	string `json:"email"`
-		Password 	string `json:"password"`
+		Username string `json:"username"`
+		Email    string `json:"email"`
+		Password string `json:"password"`
 	}
 
 	var req createUserRequest
@@ -114,12 +115,13 @@ func (r *Router) CreateUser(c *gin.Context) {
 	if err != nil {
 		log.Printf("Creation user failed: %v", err)
 		c.JSON(http.StatusConflict, gin.H{
-			"message" : "User already existsd",
+			"message": "User already existsd",
 		})
 		return
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"user_id" : res.Id,
+		"user_id": res.Id,
+		"user":    res.Username,
 	})
 }

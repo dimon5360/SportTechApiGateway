@@ -18,9 +18,9 @@ func Init() envHandler {
 	return handler
 }
 
-func (h *envHandler) Load(env_path string) {
+func (h *envHandler) Load(path string) {
 
-	file, err := os.Open(env_path)
+	file, err := os.Open(path)
 	if err != nil {
 		log.Fatal(err)
 	}

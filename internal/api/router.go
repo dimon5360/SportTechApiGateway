@@ -52,7 +52,7 @@ func (r *Router) setupRouting() {
 	r.engine.GET("/", Index)
 	r.engine.GET("/ping", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{
-			"message" : "hello user",
+			"message": "hello user",
 		})
 	})
 	r.engine.GET("/user/:id", r.GetUser)
@@ -62,7 +62,7 @@ func (r *Router) setupRouting() {
 }
 
 var sslkey string = "../../private.key"
-var sslcert string = "../../test_server.crt"
+var sslcert string = "../../server.crt"
 
 func (r *Router) Run() {
 	r.engine.RunTLS(r.ip, sslcert, sslkey)
