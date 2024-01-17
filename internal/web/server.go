@@ -1,7 +1,7 @@
 package server
 
 import (
-	router "app/main/api"
+	router "app/main/router"
 )
 
 type Server struct {
@@ -15,6 +15,5 @@ func InitServer(router router.Router) *Server {
 }
 
 func (server *Server) Run() {
-
 	server.router.Run()
 }

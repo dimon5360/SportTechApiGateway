@@ -1,7 +1,7 @@
-package router
+package api
 
 import (
-	"context"
+	"app/main/grpc_service"
 	"log"
 	"net/http"
 	"time"
@@ -19,7 +19,7 @@ func Index(c *gin.Context) {
 		})
 }
 
-func (r *Router) GetUser(c *gin.Context) {
+func GetUser(service *grpc_service.AuthService, c *gin.Context) {
 
 	type getUserRequest struct {
 		ID uint64 `uri:"id" binding:"required,min=1"`
@@ -31,10 +31,7 @@ func (r *Router) GetUser(c *gin.Context) {
 		return
 	}
 
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
-	defer cancel()
-
-	res, err := r.grpc.GetUser(ctx, &proto.GetUserRequest{
+	res, err := service.GetUser(&proto.GetUserRequest{
 		Id: req.ID,
 	})
 
@@ -47,8 +44,7 @@ func (r *Router) GetUser(c *gin.Context) {
 	c.String(http.StatusOK, res.String())
 }
 
-// test url to auth http://localhost:40401/auth?email=defaultuser@gmail.com&password=defaultuser123
-func (r *Router) AuthenticateUser(c *gin.Context) {
+func AuthenticateUser(service *grpc_service.AuthService, c *gin.Context) {
 
 	type authUserRequest struct {
 		Email    string `json:"email"`
@@ -62,12 +58,7 @@ func (r *Router) AuthenticateUser(c *gin.Context) {
 		return
 	}
 
-	log.Print(req)
-
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
-	defer cancel()
-
-	res, err := r.grpc.AuthUser(ctx, &proto.AuthUserRequest{
+	res, err := service.Auth(&proto.AuthUserRequest{
 		Email:    req.Email,
 		Password: req.Password,
 	})
@@ -86,8 +77,7 @@ func (r *Router) AuthenticateUser(c *gin.Context) {
 	})
 }
 
-// test url to create user http://localhost:40401/register?username=dmitry&email=dmitry@test.com&password=test123
-func (r *Router) CreateUser(c *gin.Context) {
+func CreateUser(service *grpc_service.AuthService, c *gin.Context) {
 
 	type createUserRequest struct {
 		Username string `json:"username"`
@@ -101,12 +91,7 @@ func (r *Router) CreateUser(c *gin.Context) {
 		return
 	}
 
-	log.Print(req)
-
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
-	defer cancel()
-
-	res, err := r.grpc.CreateUser(ctx, &proto.CreateUserRequst{
+	res, err := service.Register(&proto.CreateUserRequst{
 		Username: req.Username,
 		Email:    req.Email,
 		Password: req.Password,

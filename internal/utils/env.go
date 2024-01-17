@@ -9,16 +9,25 @@ import (
 
 type envHandler struct {
 	dict map[string]string
+	isInitialized bool
 }
 
-func Init() envHandler {
+var handler envHandler
 
-	var handler envHandler
-	handler.dict = make(map[string]string)
-	return handler
+func Env() *envHandler {
+
+	if !handler.isInitialized {
+		handler.dict = make(map[string]string)
+		handler.isInitialized = true
+	}
+	return &handler
 }
 
 func (h *envHandler) Load(path string) {
+
+	if !h.isInitialized {
+		log.Fatal("Env isn't initalized")
+	}
 
 	file, err := os.Open(path)
 	if err != nil {
