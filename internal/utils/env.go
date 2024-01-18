@@ -8,7 +8,7 @@ import (
 )
 
 type envHandler struct {
-	dict map[string]string
+	dict          map[string]string
 	isInitialized bool
 }
 
@@ -23,29 +23,32 @@ func Env() *envHandler {
 	return &handler
 }
 
-func (h *envHandler) Load(path string) {
+func (h *envHandler) Load(paths ...string) {
 
 	if !h.isInitialized {
 		log.Fatal("Env isn't initalized")
 	}
 
-	file, err := os.Open(path)
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer file.Close()
+	for _, path := range paths {
 
-	scanner := bufio.NewScanner(file)
-	for scanner.Scan() {
-		line := scanner.Text()
-		if len(line) != 0 && !strings.HasPrefix(line, "#") {
-			res := strings.Split(line, "=")
+		file, err := os.Open(path)
+		if err != nil {
+			log.Fatal(err)
+		}
+		defer file.Close()
 
-			if len(res) != 2 {
-				panic("invalid line in env file")
+		scanner := bufio.NewScanner(file)
+		for scanner.Scan() {
+			line := scanner.Text()
+			if len(line) != 0 && !strings.HasPrefix(line, "#") {
+				res := strings.Split(line, "=")
+
+				if len(res) != 2 {
+					panic("invalid line in env file")
+				}
+
+				h.dict[res[0]] = res[1]
 			}
-
-			h.dict[res[0]] = res[1]
 		}
 	}
 }

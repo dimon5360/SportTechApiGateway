@@ -2,18 +2,27 @@ package main
 
 import (
 	router "app/main/router"
+	"app/main/storage"
 	"app/main/utils"
 	server "app/main/web"
 	"fmt"
 )
 
+const (
+	configPath = "/home/dmitry/Projects/SportTechService/SportTechDockerConfig/"
+	serviceEnv = "../config/service.env"
+	apiEnv     = "../config/api.env"
+	redisEnv   = configPath + "redis.env"
+)
+
 func main() {
 
-	env := utils.Env()
-	env.Load("../config/app.env")
-	env.Load("../config/api.env")
+	utils.Env().Load(serviceEnv, apiEnv, redisEnv)
 
-	fmt.Println("Core service v." + env.Value("VERSION_APP"))
+	fmt.Println("SportTech core service v." + utils.Env().Value("SERVICE_VERSION"))
 
-	server.InitServer(router.InitRouter(env.Value("HOST"))).Run()
+	conn := storage.InitRedis()
+	conn.TestConnect()
+
+	server.InitServer(router.InitRouter(utils.Env().Value("SERVICE_HOST"))).Run()
 }
