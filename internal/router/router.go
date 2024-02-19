@@ -47,11 +47,17 @@ func InitRouter(ip string) Router {
 func (r *Router) setupRouting() {
 	env := utils.Env()
 
+	// auth users service
 	r.engine.GET(env.Value("API_V1_INDEX"), api.Index)
 	r.engine.GET(env.Value("API_V1_GET_USER_BY_ID"), r.GetUser)
 
 	r.engine.POST(env.Value("API_V1_LOGIN"), r.AuthenticateUser)
 	r.engine.POST(env.Value("API_V1_REGISTER"), r.CreateUser)
+
+	// profiles service
+
+	r.engine.POST(env.Value("API_V1_CREATE_PROFILE"), r.AuthenticateUser)
+	r.engine.GET(env.Value("API_V1_GET_PROFILE"), r.CreateUser)
 
 	// test api with grpc
 	r.engine.GET(env.Value("API_V1_PING"), func(c *gin.Context) {
@@ -79,4 +85,12 @@ func (r *Router) AuthenticateUser(c *gin.Context) {
 
 func (r *Router) CreateUser(c *gin.Context) {
 	api.CreateUser(r.authService, c)
+}
+
+func (r *Router) CreateProfile(c *gin.Context) {
+	api.CreateProfile(r.profileService, c)
+}
+
+func (r *Router) GetProfile(c *gin.Context) {
+	api.GetProfile(r.profileService, c)
 }

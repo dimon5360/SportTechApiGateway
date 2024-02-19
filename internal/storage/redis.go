@@ -3,7 +3,8 @@ package storage
 import (
 	"app/main/utils"
 	"context"
-	"fmt"
+	"log"
+	"time"
 
 	"github.com/redis/go-redis/v9"
 )
@@ -12,9 +13,9 @@ type RedisConnection struct {
 	client *redis.Client
 }
 
-func InitRedis() *RedisConnection {
+var conn RedisConnection
 
-	var conn RedisConnection
+func InitRedis() {
 
 	ip := utils.Env().Value("REDIS_HOST")
 	pass := utils.Env().Value("REDIS_HOST_PASSWORD")
@@ -26,21 +27,26 @@ func InitRedis() *RedisConnection {
 	}
 
 	conn.client = redis.NewClient(&opt)
+}
 
+func Redis() *RedisConnection {
 	return &conn
 }
 
-func (c *RedisConnection) TestConnect() {
+func (c *RedisConnection) Store(key string, value []byte, expire time.Duration) {
 	ctx := context.Background()
 
-	err := c.client.Set(ctx, "foo", "bar", 0).Err()
+	err := c.client.Set(ctx, key, value, expire).Err()
 	if err != nil {
-		panic(err)
+		log.Println(err)
 	}
+}
 
-	val, err := c.client.Get(ctx, "foo").Result()
+func (c *RedisConnection) Get(key string) []byte {
+	ctx := context.Background()
+	val, err := c.client.Get(ctx, key).Result()
 	if err != nil {
-		panic(err)
+		log.Println(err)
 	}
-	fmt.Println("foo", val)
+	return []byte(val)
 }

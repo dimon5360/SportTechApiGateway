@@ -21,8 +21,7 @@ func main() {
 
 	fmt.Println("SportTech core service v." + utils.Env().Value("SERVICE_VERSION"))
 
-	conn := storage.InitRedis()
-	conn.TestConnect()
+	storage.InitRedis()
 
 	server.InitServer(router.InitRouter(utils.Env().Value("SERVICE_HOST"))).Run()
 }

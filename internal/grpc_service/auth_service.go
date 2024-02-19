@@ -6,20 +6,12 @@ import (
 	"time"
 
 	"github.com/dimon5360/SportTechProtos/gen/go/proto"
-	"github.com/google/uuid"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
 
-type UserInfo struct {
-	UserId      uint64
-	AccessToken string
-}
-
 type AuthService struct {
 	grpc proto.AuthUsersServiceClient
-
-	Users map[uuid.UUID]UserInfo
 }
 
 func NewAuthService(host string) *AuthService {
@@ -32,7 +24,6 @@ func NewAuthService(host string) *AuthService {
 	}
 	s.grpc = proto.NewAuthUsersServiceClient(conn)
 
-	s.Users = make(map[uuid.UUID]UserInfo)
 	return &s
 }
 
