@@ -16,13 +16,13 @@ func GetProfile(service *grpc_service.ProfileService, c *gin.Context) {
 
 	ID := c.Params.ByName("user_id")
 
-	var user UserInfo
-
 	info := storage.Redis().Get(ID)
+
+	var user UserInfo
 
 	err := json.Unmarshal(info, &user)
 	if err != nil {
-		fmt.Println(err.Error())
+		c.String(http.StatusInternalServerError, "Getting profile failed")
 		return
 	}
 
@@ -31,8 +31,8 @@ func GetProfile(service *grpc_service.ProfileService, c *gin.Context) {
 	})
 
 	if err != nil {
-		log.Printf("could not get user info: %v", err)
-		c.String(http.StatusInternalServerError, "Getting user info failed")
+		log.Printf("could not get profile info: %v", err)
+		c.String(http.StatusNotFound, "Getting profile failed")
 		return
 	}
 
@@ -45,5 +45,43 @@ func GetProfile(service *grpc_service.ProfileService, c *gin.Context) {
 
 func CreateProfile(service *grpc_service.ProfileService, c *gin.Context) {
 
-	c.JSON(http.StatusOK, gin.H{})
+	type createUserRequest struct {
+		Username  string `json:"username"`
+		Firstname string `json:"firstname"`
+		Lastname  string `json:"lastname"`
+		UserId    string `json:"user_id"`
+	}
+
+	var req createUserRequest
+	if err := c.Bind(&req); err != nil {
+		c.JSON(http.StatusBadRequest, err)
+		return
+	}
+
+	info := storage.Redis().Get(req.UserId)
+
+	var user UserInfo
+	if err := json.Unmarshal(info, &user); err != nil {
+		fmt.Println(err.Error())
+		return
+	}
+
+	profileReq := proto.CreateProfileRequst{
+		Username:  req.Username,
+		Firstname: req.Firstname,
+		Lastname:  req.Lastname,
+		UserId:    user.Id,
+	}
+
+	_, err := service.CreateProfile(&profileReq)
+
+	if err != nil {
+		log.Printf("Creation profile failed: %v", err)
+		c.JSON(http.StatusConflict, gin.H{
+			"message": "Profile already existsd",
+		})
+		return
+	}
+
+	c.Status(http.StatusOK)
 }

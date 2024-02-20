@@ -29,7 +29,7 @@ func InitRouter(ip string) Router {
 
 	router.engine.LoadHTMLGlob("../static/templates/*")
 
-	router.engine.StaticFile("/favicon.ico", "../resources/favicon.ico")
+	router.engine.StaticFile("/favicxon.ico", "../resources/favicon.ico")
 	router.engine.StaticFile("/apple-touch-icon.png", "../resources/apple-touch-icon.png")
 	router.engine.StaticFile("/favicon-32x32.png", "../resources/favicon-32x32.png")
 	router.engine.Static("/resources", "../resources")
@@ -56,8 +56,8 @@ func (r *Router) setupRouting() {
 
 	// profiles service
 
-	r.engine.POST(env.Value("API_V1_CREATE_PROFILE"), r.AuthenticateUser)
-	r.engine.GET(env.Value("API_V1_GET_PROFILE"), r.CreateUser)
+	r.engine.POST(env.Value("API_V1_CREATE_PROFILE"), r.CreateProfile)
+	r.engine.GET(env.Value("API_V1_GET_PROFILE"), r.GetProfile)
 
 	// test api with grpc
 	r.engine.GET(env.Value("API_V1_PING"), func(c *gin.Context) {
