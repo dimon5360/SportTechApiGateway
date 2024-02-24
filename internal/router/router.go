@@ -27,12 +27,20 @@ func InitRouter(ip string) Router {
 		ip:     ip,
 	}
 
-	router.engine.LoadHTMLGlob("../static/templates/*")
+	// static html files
+	router.engine.LoadHTMLGlob("../static/html/**/*")
 
-	router.engine.StaticFile("/favicxon.ico", "../resources/favicon.ico")
+	router.engine.StaticFile("/favicon.ico", "../resources/favicon.ico")
 	router.engine.StaticFile("/apple-touch-icon.png", "../resources/apple-touch-icon.png")
 	router.engine.StaticFile("/favicon-32x32.png", "../resources/favicon-32x32.png")
 	router.engine.Static("/resources", "../resources")
+
+	// static js files
+	router.engine.StaticFile("/home.jsx", "../static/js/Home/index.jsx")
+	router.engine.StaticFile("/app.jsx", "../static/js/App/App.jsx")
+	router.engine.StaticFile("/app/index.js", "../static/js/App/index.js")
+
+	// router.engine.StaticFile("/main.js", "../static/js/Main/main.js") // Test webpack
 
 	router.engine.Use(cors.Default())
 
@@ -45,25 +53,24 @@ func InitRouter(ip string) Router {
 }
 
 func (r *Router) setupRouting() {
-	env := utils.Env()
 
-	// auth users service
-	r.engine.GET(env.Value("API_V1_INDEX"), api.Index)
-	r.engine.GET(env.Value("API_V1_GET_USER_BY_ID"), r.GetUser)
+	r.engine.GET("/index", api.Index)
+	r.engine.GET("/ping", api.Ping)
+	r.engine.GET("/home", api.Home)
 
-	r.engine.POST(env.Value("API_V1_LOGIN"), r.AuthenticateUser)
-	r.engine.POST(env.Value("API_V1_REGISTER"), r.CreateUser)
+	// r.engine.GET("/", api.TestWebpack) // Test webpack
 
-	// profiles service
+	route := r.engine.Group("/api/v1")
+	{
+		route.GET("/user/:id", r.GetUser)
+		route.POST("/login", r.AuthenticateUser)
+		route.POST("/register", r.CreateUser)
+		route.POST("/profile", r.CreateProfile)
+		route.GET("/profile/:user_id", r.GetProfile)
+	}
 
-	r.engine.POST(env.Value("API_V1_CREATE_PROFILE"), r.CreateProfile)
-	r.engine.GET(env.Value("API_V1_GET_PROFILE"), r.GetProfile)
-
-	// test api with grpc
-	r.engine.GET(env.Value("API_V1_PING"), func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{
-			"message": "ping message hello from server",
-		})
+	r.engine.NoRoute(func(c *gin.Context) {
+		c.Status(http.StatusNotFound)
 	})
 }
 

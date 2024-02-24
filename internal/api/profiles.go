@@ -4,7 +4,6 @@ import (
 	"app/main/grpc_service"
 	"app/main/storage"
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
 
@@ -22,7 +21,10 @@ func GetProfile(service *grpc_service.ProfileService, c *gin.Context) {
 
 	err := json.Unmarshal(info, &user)
 	if err != nil {
-		c.String(http.StatusInternalServerError, "Getting profile failed")
+		log.Println(err.Error())
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": InvalidRequestArgs,
+		})
 		return
 	}
 
@@ -32,7 +34,8 @@ func GetProfile(service *grpc_service.ProfileService, c *gin.Context) {
 
 	if err != nil {
 		log.Printf("could not get profile info: %v", err)
-		c.String(http.StatusNotFound, "Getting profile failed")
+		c.String(http.StatusInternalServerError, "Getting profile info failed")
+		// c.Redirect(http.StatusFound, "/api/v1/register")
 		return
 	}
 
@@ -54,7 +57,10 @@ func CreateProfile(service *grpc_service.ProfileService, c *gin.Context) {
 
 	var req createUserRequest
 	if err := c.Bind(&req); err != nil {
-		c.JSON(http.StatusBadRequest, err)
+		log.Println(err.Error())
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": InvalidRequestArgs,
+		})
 		return
 	}
 
@@ -62,7 +68,10 @@ func CreateProfile(service *grpc_service.ProfileService, c *gin.Context) {
 
 	var user UserInfo
 	if err := json.Unmarshal(info, &user); err != nil {
-		fmt.Println(err.Error())
+		log.Println(err.Error())
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": InvalidRequestArgs,
+		})
 		return
 	}
 

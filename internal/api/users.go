@@ -25,7 +25,10 @@ func GetUser(service *grpc_service.AuthService, c *gin.Context) {
 
 	err := json.Unmarshal(info, &user)
 	if err != nil {
-		fmt.Println(err.Error())
+		log.Println(err.Error())
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": InvalidRequestArgs,
+		})
 		return
 	}
 
@@ -54,7 +57,10 @@ func AuthenticateUser(service *grpc_service.AuthService, c *gin.Context) {
 	var req authUserRequest
 	err := c.Bind(&req)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, err)
+		log.Println(err.Error())
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": InvalidRequestArgs,
+		})
 		return
 	}
 
@@ -125,7 +131,10 @@ func CreateUser(service *grpc_service.AuthService, c *gin.Context) {
 
 	var req createUserRequest
 	if err := c.Bind(&req); err != nil {
-		c.JSON(http.StatusBadRequest, err)
+		log.Println(err.Error())
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": InvalidRequestArgs,
+		})
 		return
 	}
 
@@ -142,5 +151,7 @@ func CreateUser(service *grpc_service.AuthService, c *gin.Context) {
 		return
 	}
 
+	// need to transfer frontend to provide redirecting
+	// c.Redirect(http.StatusFound, "/api/v1/createprofile") // doesn't work yet
 	c.Status(http.StatusOK)
 }
