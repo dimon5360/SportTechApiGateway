@@ -12,19 +12,32 @@ import (
 
 type AuthService struct {
 	grpc proto.AuthUsersServiceClient
+
+	isInitialized bool
 }
 
-func NewAuthService(host string) *AuthService {
+var authService AuthService
 
-	var s AuthService
-	conn, err := grpc.Dial(host, grpc.WithTransportCredentials(insecure.NewCredentials()))
+func NewAuthService(host string) {
 
-	if err != nil {
-		log.Fatalf("did not connect: %v", err)
+	if !authService.isInitialized {
+		conn, err := grpc.Dial(host, grpc.WithTransportCredentials(insecure.NewCredentials()))
+
+		if err != nil {
+			log.Fatalf("did not connect: %v", err)
+		}
+		authService.grpc = proto.NewAuthUsersServiceClient(conn)
+		authService.isInitialized = true
 	}
-	s.grpc = proto.NewAuthUsersServiceClient(conn)
+}
 
-	return &s
+func AuthServiceInstance() *AuthService {
+
+	if !authService.isInitialized {
+		return nil
+	}
+
+	return &authService
 }
 
 func (s *AuthService) GetUser(req *proto.GetUserRequest) (*proto.UserInfoResponse, error) {

@@ -12,18 +12,32 @@ import (
 
 type ProfileService struct {
 	grpc proto.ProfileUsersServiceClient
+
+	isInitialized bool
 }
 
-func NewProfileService(host string) *ProfileService {
+var profileService ProfileService
 
-	var s ProfileService
-	conn, err := grpc.Dial(host, grpc.WithTransportCredentials(insecure.NewCredentials()))
+func NewProfileService(host string) {
 
-	if err != nil {
-		log.Fatalf("did not connect: %v", err)
+	if !profileService.isInitialized {
+		conn, err := grpc.Dial(host, grpc.WithTransportCredentials(insecure.NewCredentials()))
+
+		if err != nil {
+			log.Fatalf("did not connect: %v", err)
+		}
+		profileService.grpc = proto.NewProfileUsersServiceClient(conn)
+		profileService.isInitialized = true
 	}
-	s.grpc = proto.NewProfileUsersServiceClient(conn)
-	return &s
+}
+
+func ProfileServiceInstance() *ProfileService {
+
+	if !profileService.isInitialized {
+		return nil
+	}
+
+	return &profileService
 }
 
 func (s *ProfileService) CreateProfile(req *proto.CreateProfileRequst) (*proto.UserProfileResponse, error) {

@@ -4,6 +4,7 @@ import (
 	"app/main/grpc_service"
 	"app/main/storage"
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 
@@ -11,7 +12,24 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func GetProfile(service *grpc_service.ProfileService, c *gin.Context) {
+func VerifyProfile(userId uint64) error {
+
+	service := grpc_service.ProfileServiceInstance()
+
+	res, err := service.GetProfile(&proto.GetProfileRequest{
+		UserId: userId,
+	})
+
+	if err != nil || res.Id == 0 {
+		return fmt.Errorf("%s: %v", "could not get profile info: %v", err)
+	}
+
+	return nil
+}
+
+func GetProfile(c *gin.Context) {
+
+	service := grpc_service.ProfileServiceInstance()
 
 	ID := c.Params.ByName("user_id")
 
@@ -34,8 +52,7 @@ func GetProfile(service *grpc_service.ProfileService, c *gin.Context) {
 
 	if err != nil {
 		log.Printf("could not get profile info: %v", err)
-		c.String(http.StatusInternalServerError, "Getting profile info failed")
-		// c.Redirect(http.StatusFound, "/api/v1/register")
+		c.Redirect(http.StatusFound, "/create-profile")
 		return
 	}
 
@@ -46,7 +63,9 @@ func GetProfile(service *grpc_service.ProfileService, c *gin.Context) {
 	})
 }
 
-func CreateProfile(service *grpc_service.ProfileService, c *gin.Context) {
+func CreateProfile(c *gin.Context) {
+
+	service := grpc_service.ProfileServiceInstance()
 
 	type createUserRequest struct {
 		Username  string `json:"username"`
@@ -92,5 +111,5 @@ func CreateProfile(service *grpc_service.ProfileService, c *gin.Context) {
 		return
 	}
 
-	c.Status(http.StatusOK)
+	c.Redirect(http.StatusFound, "/profile/"+req.UserId)
 }

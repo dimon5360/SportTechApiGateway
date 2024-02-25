@@ -12,10 +12,38 @@ import (
 	proto "github.com/dimon5360/SportTechProtos/gen/go/proto"
 	"github.com/gin-gonic/gin"
 	jwt "github.com/golang-jwt/jwt/v5"
-	"github.com/google/uuid"
 )
 
-func GetUser(service *grpc_service.AuthService, c *gin.Context) {
+func ProcessingFailed(c *gin.Context, err error, message string, status int) {
+
+	log.Println(err.Error())
+
+	c.JSON(status, gin.H{
+		"error": InvalidRequestArgs,
+	})
+}
+
+func generateToken(id uint64) (string, error) {
+
+	payload := jwt.MapClaims{
+		"sub": id,
+		"iat": time.Now().Add(time.Hour * 72).Unix(),
+	}
+
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, payload)
+	var jwtSecretKey = []byte("very-secret-key")
+
+	t, err := token.SignedString(jwtSecretKey)
+	if err != nil {
+		return "", err
+	}
+
+	return t, nil
+}
+
+func GetUser(c *gin.Context) {
+
+	service := grpc_service.AuthServiceInstance()
 
 	ID := c.Params.ByName("id")
 
@@ -25,10 +53,7 @@ func GetUser(service *grpc_service.AuthService, c *gin.Context) {
 
 	err := json.Unmarshal(info, &user)
 	if err != nil {
-		log.Println(err.Error())
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": InvalidRequestArgs,
-		})
+		ProcessingFailed(c, err, InvalidRequestArgs, http.StatusBadRequest)
 		return
 	}
 
@@ -37,8 +62,7 @@ func GetUser(service *grpc_service.AuthService, c *gin.Context) {
 	})
 
 	if err != nil {
-		log.Printf("could not get user info: %v", err)
-		c.String(http.StatusInternalServerError, "Getting user info failed")
+		ProcessingFailed(c, err, "Getting user info failed", http.StatusInternalServerError)
 		return
 	}
 
@@ -47,7 +71,9 @@ func GetUser(service *grpc_service.AuthService, c *gin.Context) {
 	})
 }
 
-func AuthenticateUser(service *grpc_service.AuthService, c *gin.Context) {
+func AuthenticateUser(c *gin.Context) {
+
+	service := grpc_service.AuthServiceInstance()
 
 	type authUserRequest struct {
 		Email    string `json:"email"`
@@ -57,12 +83,11 @@ func AuthenticateUser(service *grpc_service.AuthService, c *gin.Context) {
 	var req authUserRequest
 	err := c.Bind(&req)
 	if err != nil {
-		log.Println(err.Error())
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": InvalidRequestArgs,
-		})
+		ProcessingFailed(c, err, InvalidRequestArgs, http.StatusBadRequest)
 		return
 	}
+
+	fmt.Printf("%s: %v\n", "Auth user request", req)
 
 	res, err := service.Auth(&proto.AuthUserRequest{
 		Email:    req.Email,
@@ -70,59 +95,58 @@ func AuthenticateUser(service *grpc_service.AuthService, c *gin.Context) {
 	})
 
 	if err != nil {
-		log.Printf("Authentication failed: %v", err)
-		c.JSON(http.StatusUnauthorized, gin.H{
-			"message": "Authentication failed",
-		})
+		ProcessingFailed(c, err, "Authentication failed", http.StatusUnauthorized)
 		return
 	}
 
-	payload := jwt.MapClaims{
-		"sub": res.Id,
-		"iat": time.Now().Add(time.Hour * 72).Unix(),
-	}
-
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, payload)
-	var jwtSecretKey = []byte("very-secret-key")
-
-	t, err := token.SignedString(jwtSecretKey)
+	var id uint64 = res.Id
+	token, err := generateToken(id)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"message": "JWT token signing failed",
-		})
+		ProcessingFailed(c, err, "JWT token signing failed", http.StatusInternalServerError)
 		return
 	}
 
 	expireIn := time.Hour * 24
 
-	c.SetCookie("access_token", t, int(time.Now().Add(expireIn).Unix()), "", "", true, false)
+	c.SetCookie("access_token", token, int(time.Now().Add(expireIn).Unix()), "", "", true, false)
 	ck, err := c.Cookie("access_token")
 	if err != nil {
 		log.Println(ck)
 	}
 
-	id := uuid.New().String()
-
 	bytes, err := json.Marshal(UserInfo{
-		Id:          res.Id,
-		AccessToken: t,
+		Id:          id,
+		AccessToken: token,
 	})
 
 	if err != nil {
-		fmt.Println(err.Error())
+		ProcessingFailed(c, err, "JWT token handling failed", http.StatusInternalServerError)
 		return
 	}
 
-	storage.Redis().Store(id, bytes, expireIn)
+	storage.Redis().Store(fmt.Sprintf("%d", id), bytes, expireIn)
 
-	c.JSON(http.StatusOK, gin.H{
+	if err = VerifyProfile(id); err != nil {
+		c.Redirect(http.StatusFound, "/create-profile")
+	}
+
+	userInfo := gin.H{
 		"user_id":       id,
 		"refresh_token": "default refresh token",
-		"access_token":  t,
-	})
+		"access_token":  token,
+	}
+
+	// if err = VerifyProfile(id); err != nil {
+	// 	c.JSON(http.StatusFound, userInfo)
+	// 	c.Redirect(http.StatusFound, "/create-profile")
+	// }
+
+	c.JSON(http.StatusOK, userInfo)
 }
 
-func CreateUser(service *grpc_service.AuthService, c *gin.Context) {
+func CreateUser(c *gin.Context) {
+
+	service := grpc_service.AuthServiceInstance()
 
 	type createUserRequest struct {
 		Email    string `json:"email"`
@@ -130,13 +154,13 @@ func CreateUser(service *grpc_service.AuthService, c *gin.Context) {
 	}
 
 	var req createUserRequest
+
 	if err := c.Bind(&req); err != nil {
-		log.Println(err.Error())
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": InvalidRequestArgs,
-		})
+		ProcessingFailed(c, err, InvalidRequestArgs, http.StatusBadRequest)
 		return
 	}
+
+	fmt.Printf("%s: %v\n", "Auth user request", req)
 
 	_, err := service.Register(&proto.CreateUserRequst{
 		Email:    req.Email,
@@ -144,14 +168,9 @@ func CreateUser(service *grpc_service.AuthService, c *gin.Context) {
 	})
 
 	if err != nil {
-		log.Printf("Creation user failed: %v", err)
-		c.JSON(http.StatusConflict, gin.H{
-			"message": "User already existsd",
-		})
+		ProcessingFailed(c, err, "User already exists", http.StatusConflict)
 		return
 	}
 
-	// need to transfer frontend to provide redirecting
-	// c.Redirect(http.StatusFound, "/api/v1/createprofile") // doesn't work yet
 	c.Status(http.StatusOK)
 }

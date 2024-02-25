@@ -3,8 +3,16 @@ package api
 import (
 	"net/http"
 
+	proto "github.com/dimon5360/SportTechProtos/gen/go/proto"
 	"github.com/gin-gonic/gin"
 )
+
+type GetProfileCallback func(req *proto.GetProfileRequest) (*proto.UserProfileResponse, error)
+type CreateProfileCallback func(req *proto.CreateProfileRequst) (*proto.UserProfileResponse, error)
+
+type GetUserCallback func(req *proto.GetUserRequest) (*proto.UserInfoResponse, error)
+type AuthUserCallback func(req *proto.AuthUserRequest) (*proto.UserInfoResponse, error)
+type CreateUserCallback func(req *proto.CreateUserRequst) (*proto.UserInfoResponse, error)
 
 type UserInfo struct {
 	Id          uint64
@@ -35,12 +43,6 @@ func Home(c *gin.Context) {
 		"content": "This is a home page...",
 	})
 }
-
-// func TestWebpack(c *gin.Context) {
-// 	c.HTML(http.StatusOK, "Test/index.html", gin.H{
-// 		"content": "This is a home page...",
-// 	})
-// }
 
 func Ping(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
