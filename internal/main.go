@@ -11,15 +11,14 @@ import (
 const (
 	configPath = "/home/dmitry/Projects/SportTechService/SportTechDockerConfig/"
 	serviceEnv = "../config/service.env"
-	apiEnv     = "../config/api.env"
 	redisEnv   = configPath + "redis.env"
 )
 
 func main() {
 
-	utils.Env().Load(serviceEnv, apiEnv, redisEnv)
+	utils.Env().Load(serviceEnv, redisEnv)
 
-	fmt.Println("SportTech core service v." + utils.Env().Value("SERVICE_VERSION"))
+	fmt.Println("SportTech user API service v." + utils.Env().Value("SERVICE_VERSION"))
 
 	storage.InitRedis()
 

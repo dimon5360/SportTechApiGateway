@@ -66,10 +66,9 @@ func (r *Router) setupRouting() {
 }
 
 func (r *Router) Run() {
-	// env := utils.Env()
+	env := utils.Env()
 
-	r.engine.Run(r.ip)
-	// r.engine.RunTLS(r.ip,
-	// 	env.Value("SSL_CERT_PATH"),
-	// 	env.Value("SSL_KEY_PATH"))
+	r.engine.RunTLS(r.ip,
+		env.Value("SSL_CERT_PATH"),
+		env.Value("SSL_KEY_PATH"))
 }
