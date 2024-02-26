@@ -22,7 +22,6 @@ func main() {
 	fmt.Println("SportTech user API service v." + utils.Env().Value("SERVICE_VERSION"))
 
 	storage.InitRedis()
-	storage.InitMongo()
 
 	server.InitServer(router.InitRouter(utils.Env().Value("SERVICE_HOST"))).Run()
 }

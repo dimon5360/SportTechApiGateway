@@ -38,6 +38,7 @@ func InitRouter(ip string) Router {
 
 	grpc_service.NewAuthService(utils.Env().Value("AUTH_GRPC_HOST"))
 	grpc_service.NewProfileService(utils.Env().Value("PROFILE_GRPC_HOST"))
+	grpc_service.NewReportService(utils.Env().Value("PROFILE_GRPC_HOST"))
 
 	router.authService = grpc_service.AuthServiceInstance()
 	router.profileService = grpc_service.ProfileServiceInstance()
