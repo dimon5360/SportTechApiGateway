@@ -17,7 +17,7 @@ var conn RedisConnection
 
 func InitRedis() {
 
-	ip := utils.Env().Value("REDIS_HOST")
+	ip := utils.Env().Value("REDIS_DB_HOST")
 	pass := utils.Env().Value("REDIS_HOST_PASSWORD")
 
 	opt := redis.Options{
