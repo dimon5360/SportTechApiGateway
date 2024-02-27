@@ -38,12 +38,6 @@ func Index(c *gin.Context) {
 	c.Redirect(http.StatusFound, "/home")
 }
 
-func Home(c *gin.Context) {
-	c.HTML(http.StatusOK, "Home/index.html", gin.H{
-		"content": "This is a home page...",
-	})
-}
-
 func Ping(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"Message": "Hello from server",
