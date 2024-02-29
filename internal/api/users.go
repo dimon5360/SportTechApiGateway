@@ -127,7 +127,7 @@ func AuthenticateUser(c *gin.Context) {
 	storage.Redis().Store(fmt.Sprintf("%d", id), bytes, expireIn)
 
 	if err = VerifyProfile(id); err != nil {
-		c.Redirect(http.StatusFound, "/create-profile")
+		c.Redirect(http.StatusFound, "/profile/create")
 	}
 
 	userInfo := gin.H{
@@ -135,11 +135,6 @@ func AuthenticateUser(c *gin.Context) {
 		"refresh_token": "default refresh token",
 		"access_token":  token,
 	}
-
-	// if err = VerifyProfile(id); err != nil {
-	// 	c.JSON(http.StatusFound, userInfo)
-	// 	c.Redirect(http.StatusFound, "/create-profile")
-	// }
 
 	c.JSON(http.StatusOK, userInfo)
 }

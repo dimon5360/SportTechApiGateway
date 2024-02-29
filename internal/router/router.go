@@ -16,6 +16,7 @@ type Router struct {
 
 	authService    *grpc_service.AuthService
 	profileService *grpc_service.ProfileService
+	reportService  *grpc_service.ReportService
 
 	ip string
 }
@@ -31,7 +32,7 @@ func InitRouter(ip string) Router {
 	router.engine.StaticFile("/apple-touch-icon.png", "../resources/apple-touch-icon.png")
 	router.engine.StaticFile("/favicon-32x32.png", "../resources/favicon-32x32.png")
 	router.engine.Static("/resources", "../resources")
-	router.engine.StaticFile("/index.html", "../static/html/index.html")
+	// router.engine.StaticFile("/index.html", "../static/html/index.html")
 
 	router.engine.Use(cors.Default())
 
@@ -43,6 +44,7 @@ func InitRouter(ip string) Router {
 
 	router.authService = grpc_service.AuthServiceInstance()
 	router.profileService = grpc_service.ProfileServiceInstance()
+	router.reportService = grpc_service.ReportServiceInstance()
 
 	return router
 }
@@ -56,13 +58,13 @@ func (r *Router) setupRouting() {
 	{
 		route.GET("/user/get/:id", api.GetUser)
 		route.POST("/user/login", api.AuthenticateUser)
-		route.POST("/user/register", api.CreateUser)
+		route.POST("/user/signup", api.CreateUser)
 
-		route.POST("profile/create", api.CreateProfile)
+		route.POST("/profile/create", api.CreateProfile)
 		route.GET("/profile/get/:user_id", api.GetProfile)
 
-		route.POST("report/post", api.CreateReport)
-		route.POST("report/get/:user_id", api.GetReport)
+		route.POST("/report/post", api.CreateReport)
+		route.POST("/report/get/:user_id", api.GetReport)
 	}
 
 	r.engine.NoRoute(func(c *gin.Context) {

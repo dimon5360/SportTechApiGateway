@@ -6,14 +6,14 @@ require (
 	github.com/dimon5360/SportTechProtos v0.1.0
 	github.com/gin-gonic/gin v1.9.1
 	github.com/redis/go-redis/v9 v9.5.1
-	github.com/rs/cors/wrapper/gin v0.0.0-20240209234054-af821aecfc8d
+	github.com/rs/cors/wrapper/gin v0.0.0-20240228164225-8d33ca4794ea
 	google.golang.org/grpc v1.62.0
 )
 
-require google.golang.org/genproto/googleapis/rpc v0.0.0-20240221002015-b0ce06bbee7c // indirect
+require google.golang.org/genproto/googleapis/rpc v0.0.0-20240228224816-df926f6c8641 // indirect
 
 require (
-	github.com/bytedance/sonic v1.11.1 // indirect
+	github.com/bytedance/sonic v1.11.2 // indirect
 	github.com/cespare/xxhash/v2 v2.2.0 // indirect
 	github.com/chenzhuoyu/base64x v0.0.0-20230717121745-296ad89f973d // indirect
 	github.com/chenzhuoyu/iasm v0.9.1 // indirect

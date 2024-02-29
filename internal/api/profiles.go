@@ -52,7 +52,7 @@ func GetProfile(c *gin.Context) {
 
 	if err != nil {
 		log.Printf("could not get profile info: %v", err)
-		c.Redirect(http.StatusFound, "/create-profile")
+		c.Redirect(http.StatusFound, "/profile/create")
 		return
 	}
 
@@ -111,5 +111,5 @@ func CreateProfile(c *gin.Context) {
 		return
 	}
 
-	c.Redirect(http.StatusFound, "/profile/"+req.UserId)
+	c.Redirect(http.StatusFound, "/profile/get/"+req.UserId)
 }

@@ -34,6 +34,14 @@ func GetReport(c *gin.Context) {
 		UserId: user.Id,
 	})
 
+	if err != nil {
+		log.Printf("Creation report failed: %v", err)
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"message": "Creation report failed",
+		})
+		return
+	}
+
 	c.JSON(http.StatusOK, gin.H{
 		"user_id":    res.UserId,
 		"document":   res.Report,
