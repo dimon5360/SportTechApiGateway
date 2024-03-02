@@ -44,7 +44,7 @@ func (h *envHandler) Load(paths ...string) {
 				res := strings.Split(line, "=")
 
 				if len(res) != 2 {
-					panic("invalid line in env file")
+					log.Fatal("invalid line in env file")
 				}
 
 				h.dict[res[0]] = res[1]

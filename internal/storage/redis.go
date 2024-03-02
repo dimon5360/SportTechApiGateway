@@ -1,7 +1,7 @@
 package storage
 
 import (
-	"app/main/utils"
+	"app/main/pkg/utils"
 	"context"
 	"log"
 	"time"
