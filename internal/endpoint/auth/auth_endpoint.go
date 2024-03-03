@@ -13,7 +13,7 @@ type authEndpoint struct {
 	token repository.Interface
 }
 
-func NewAuthEndpoint(repo ...repository.Interface) endpoint.Interface {
+func New(repo ...repository.Interface) endpoint.Interface {
 	if len(repo) != 2 {
 		log.Fatalln()
 		return nil

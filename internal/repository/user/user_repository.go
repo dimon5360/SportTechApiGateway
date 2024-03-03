@@ -19,7 +19,7 @@ type userRepository struct {
 
 const userRepositoryKey = "USER_GRPC_HOST"
 
-func NewUserRepository() repository.Interface {
+func New() repository.Interface {
 
 	return &userRepository{}
 }

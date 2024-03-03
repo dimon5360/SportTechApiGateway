@@ -2,7 +2,6 @@ package service
 
 import (
 	"app/main/internal/endpoint"
-	"app/main/internal/middleware"
 	"app/main/internal/service"
 	"app/main/pkg/utils"
 	"log"
@@ -28,7 +27,7 @@ type userService struct {
 	auth    endpoint.Interface
 }
 
-func NewUserService(endpoints ...endpoint.Interface) service.Interface {
+func New(endpoints ...endpoint.Interface) service.Interface {
 	if len(endpoints) != 4 {
 		log.Fatal("invalid endpoints number")
 		return nil
@@ -49,7 +48,6 @@ func (s *userService) Init() error {
 
 	s.engine.Use(gin.Logger())
 	s.engine.Use(gin.Recovery())
-	s.engine.Use(middleware.TokenValidation())
 
 	if err := s.initStatic(); err != nil {
 		log.Fatal(err)
@@ -59,6 +57,9 @@ func (s *userService) Init() error {
 		log.Fatal(err)
 	}
 	return nil
+}
+func (s *userService) Middleware(mw func(c *gin.Context)) {
+	s.engine.Use(mw)
 }
 
 func (s *userService) initStatic() error {

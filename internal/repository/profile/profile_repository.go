@@ -17,7 +17,7 @@ type profileRepository struct {
 	grpc proto.ProfileUsersServiceClient
 }
 
-func NewProfileRepository() repository.Interface {
+func New() repository.Interface {
 	return &profileRepository{}
 }
 

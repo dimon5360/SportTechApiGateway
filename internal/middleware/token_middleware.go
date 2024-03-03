@@ -3,7 +3,6 @@ package middleware
 import (
 	"app/main/internal/repository"
 	"app/main/internal/repository/model"
-	tokenRepo "app/main/internal/repository/token"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"log"
@@ -15,23 +14,18 @@ const (
 	redirectLoginUrl   = "/user/login"
 )
 
-type Token struct {
+type token struct {
 	token repository.Interface
 }
 
-func redirectToLoginPage(c *gin.Context, message string) {
-	log.Println(message)
-	c.Redirect(http.StatusFound, redirectLoginUrl)
-}
-
-func TokenValidation() func(c *gin.Context) {
-	mw := Token{
-		token: tokenRepo.NewTokenRepository(),
+func TokenValidation(repo repository.Interface) func(c *gin.Context) {
+	mw := token{
+		token: repo,
 	}
 	return mw.Verify
 }
 
-func (s *Token) Verify(c *gin.Context) {
+func (s *token) Verify(c *gin.Context) {
 
 	log.Println("token validation")
 	var userId, token string
@@ -75,4 +69,9 @@ func (s *Token) Verify(c *gin.Context) {
 
 	redirectToLoginPage(c, "key not found in redis")
 	return
+}
+
+func redirectToLoginPage(c *gin.Context, message string) {
+	log.Println(message)
+	c.Redirect(http.StatusFound, redirectLoginUrl)
 }

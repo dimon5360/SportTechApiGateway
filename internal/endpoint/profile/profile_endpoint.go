@@ -16,7 +16,7 @@ type profileEndpoint struct {
 	repo repository.Interface
 }
 
-func NewProfileEndpoint(repo ...repository.Interface) endpoint.Interface {
+func New(repo ...repository.Interface) endpoint.Interface {
 	if len(repo) != 1 {
 		return nil
 	}

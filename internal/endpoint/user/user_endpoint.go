@@ -16,7 +16,7 @@ type userEndpoint struct {
 	user repository.Interface
 }
 
-func NewUserEndpoint(repo ...repository.Interface) endpoint.Interface {
+func New(repo ...repository.Interface) endpoint.Interface {
 	if len(repo) != 1 {
 		return nil
 	}

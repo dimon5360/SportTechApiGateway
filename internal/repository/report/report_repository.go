@@ -17,7 +17,7 @@ type reportRepository struct {
 	grpc proto.ReportUsersServiceClient
 }
 
-func NewReportRepository() repository.Interface {
+func New() repository.Interface {
 	return &reportRepository{}
 }
 

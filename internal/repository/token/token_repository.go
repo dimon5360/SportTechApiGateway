@@ -25,7 +25,7 @@ type redisRepository struct {
 
 var repo *redisRepository
 
-func NewTokenRepository() repository.Interface {
+func New() repository.Interface {
 	if repo == nil {
 		repo = &redisRepository{
 			client: nil,
