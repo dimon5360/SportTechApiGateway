@@ -2,6 +2,7 @@ package service
 
 import (
 	"app/main/internal/endpoint"
+	"app/main/internal/middleware"
 	"app/main/internal/service"
 	"app/main/pkg/utils"
 	"log"
@@ -13,7 +14,7 @@ import (
 var _ service.Interface = (*userService)(nil)
 
 const (
-	serviveHostKey = "SERVICE_HOST"
+	serviceHostKey = "SERVICE_HOST"
 	sslCertPath    = "SSL_CERT_PATH"
 	sslKetPath     = "SSL_KEY_PATH"
 )
@@ -24,23 +25,43 @@ type userService struct {
 	user    endpoint.Interface
 	profile endpoint.Interface
 	report  endpoint.Interface
+	auth    endpoint.Interface
 }
 
-func NewUserService(
-	user endpoint.Interface,
-	profile endpoint.Interface,
-	report endpoint.Interface,
-) service.Interface {
-	return &userService{
-		user:    user,
-		profile: profile,
-		report:  report,
+func NewUserService(endpoints ...endpoint.Interface) service.Interface {
+	if len(endpoints) != 4 {
+		log.Fatal("invalid endpoints number")
+		return nil
 	}
+
+	s := userService{
+		user:    endpoints[0],
+		profile: endpoints[1],
+		report:  endpoints[2],
+		auth:    endpoints[3],
+	}
+
+	s.engine = gin.Default()
+	return &s
 }
 
 func (s *userService) Init() error {
 
-	s.engine = gin.Default()
+	s.engine.Use(gin.Logger())
+	s.engine.Use(gin.Recovery())
+	s.engine.Use(middleware.TokenValidation())
+
+	if err := s.initStatic(); err != nil {
+		log.Fatal(err)
+	}
+
+	if err := s.initEndpoints(); err != nil {
+		log.Fatal(err)
+	}
+	return nil
+}
+
+func (s *userService) initStatic() error {
 
 	s.engine.Static("/resources", "./resources")
 	s.engine.Static("/static", "./static/html")
@@ -51,14 +72,17 @@ func (s *userService) Init() error {
 	s.engine.StaticFile("/apple-touch-icon.png", "./resources/apple-touch-icon.png")
 	s.engine.StaticFile("/favicon-32x32.png", "./resources/favicon-32x32.png")
 
+	return nil
+}
+
+func (s *userService) initEndpoints() error {
+
 	s.engine.GET("/", endpoint.Index)
-	// s.engine.GET("/index", endpoint.Index)
 	s.engine.GET("/ping", endpoint.Ping)
 
 	route := s.engine.Group("/api/v1")
 	{
 		route.GET("/user/get/:id", s.user.Get)
-		// route.POST("/user/login", api.AuthenticateUser)
 		route.POST("/user/signup", s.user.Post)
 
 		route.GET("/profile/get/:user_id", s.profile.Get)
@@ -66,19 +90,20 @@ func (s *userService) Init() error {
 
 		route.POST("/report/get/:user_id", s.report.Get)
 		route.POST("/report/post", s.report.Post)
+
+		route.POST("/user/login", s.auth.Post)
 	}
 
 	s.engine.NoRoute(func(c *gin.Context) {
 		c.Status(http.StatusNotFound)
 	})
-
 	return nil
 }
 
 func (s *userService) Run() error {
 	env := utils.Env()
 
-	host, err := env.Value(serviveHostKey)
+	host, err := env.Value(serviceHostKey)
 	if err != nil {
 		log.Fatal(err)
 	}

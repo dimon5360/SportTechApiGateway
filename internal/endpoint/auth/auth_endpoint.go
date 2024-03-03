@@ -1,5 +1,52 @@
 package endpoint
 
+import (
+	"app/main/internal/endpoint"
+	"app/main/internal/repository"
+	"github.com/gin-gonic/gin"
+	"log"
+	"net/http"
+)
+
+type authEndpoint struct {
+	user  repository.Interface
+	token repository.Interface
+}
+
+func NewAuthEndpoint(repo ...repository.Interface) endpoint.Interface {
+	if len(repo) != 2 {
+		log.Fatalln()
+		return nil
+	}
+
+	e := &authEndpoint{
+		user:  repo[0],
+		token: repo[1],
+	}
+
+	if err := e.user.Init(); err != nil {
+		log.Fatal(err)
+	}
+
+	if err := e.token.Init(); err != nil {
+		log.Fatal(err)
+	}
+
+	return e
+}
+
+func (e *authEndpoint) Get(c *gin.Context) {
+
+	log.Println("unimplemented method")
+	c.Status(http.StatusOK)
+}
+
+func (e *authEndpoint) Post(c *gin.Context) {
+
+	log.Println("unimplemented method")
+	c.Status(http.StatusOK)
+}
+
 // func ProcessingFailed(c *gin.Context, err error, message string, status int) {
 
 // 	log.Println(err.Error())

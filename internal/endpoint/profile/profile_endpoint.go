@@ -16,13 +16,18 @@ type profileEndpoint struct {
 	repo repository.Interface
 }
 
-func NewProfileEndpoint(repo ...repository.Interface) (endpoint.Interface, error) {
-	if len(repo) > 1 {
-		return nil, nil
+func NewProfileEndpoint(repo ...repository.Interface) endpoint.Interface {
+	if len(repo) != 1 {
+		return nil
 	}
-	return &profileEndpoint{
+	e := &profileEndpoint{
 		repo: repo[0],
-	}, nil
+	}
+
+	if err := e.repo.Init(); err != nil {
+		log.Fatal(err)
+	}
+	return e
 }
 
 func (e *profileEndpoint) Get(c *gin.Context) {

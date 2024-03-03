@@ -23,18 +23,19 @@ func NewProfileRepository() repository.Interface {
 
 func (s *profileRepository) Init() error {
 
-	host, err := utils.Env().Value("PROFILE_GRPC_HOST")
-	if err != nil {
-		log.Fatal(err)
+	if s.grpc == nil {
+		host, err := utils.Env().Value("PROFILE_GRPC_HOST")
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		conn, err := grpc.Dial(host, grpc.WithTransportCredentials(insecure.NewCredentials()))
+
+		if err != nil {
+			log.Fatalf("did not connect: %v", err)
+		}
+		s.grpc = proto.NewProfileUsersServiceClient(conn)
 	}
-
-	conn, err := grpc.Dial(host, grpc.WithTransportCredentials(insecure.NewCredentials()))
-
-	if err != nil {
-		log.Fatalf("did not connect: %v", err)
-	}
-	s.grpc = proto.NewProfileUsersServiceClient(conn)
-
 	return nil
 }
 

@@ -16,8 +16,8 @@ func New() *App {
 
 func (a *App) Init() error {
 
-	a.sp = NewServiceProvider()
 	a.sp.Config()
+	a.sp = NewServiceProvider()
 	a.sp.Init()
 
 	version, err := utils.Env().Value("SERVICE_VERSION")

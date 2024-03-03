@@ -16,13 +16,19 @@ type reportEndpoint struct {
 	repo repository.Interface
 }
 
-func NewReportEndpoint(repo ...repository.Interface) (endpoint.Interface, error) {
-	if len(repo) > 1 {
-		return nil, nil
+func NewReportEndpoint(repo ...repository.Interface) endpoint.Interface {
+	if len(repo) != 1 {
+		return nil
 	}
-	return &reportEndpoint{
+
+	e := &reportEndpoint{
 		repo: repo[0],
-	}, nil
+	}
+
+	if err := e.repo.Init(); err != nil {
+		log.Fatal(err)
+	}
+	return e
 }
 
 func (e *reportEndpoint) Get(c *gin.Context) {

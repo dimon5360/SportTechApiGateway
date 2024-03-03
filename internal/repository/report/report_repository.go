@@ -23,16 +23,18 @@ func NewReportRepository() repository.Interface {
 
 func (s *reportRepository) Init() error {
 
-	host, err := utils.Env().Value("REPORT_GRPC_HOST")
-	if err != nil {
-		log.Fatal(err)
-	}
+	if s.grpc == nil {
+		host, err := utils.Env().Value("REPORT_GRPC_HOST")
+		if err != nil {
+			log.Fatal(err)
+		}
 
-	conn, err := grpc.Dial(host, grpc.WithTransportCredentials(insecure.NewCredentials()))
-	if err != nil {
-		log.Fatalf("did not connect: %v", err)
+		conn, err := grpc.Dial(host, grpc.WithTransportCredentials(insecure.NewCredentials()))
+		if err != nil {
+			log.Fatalf("did not connect: %v", err)
+		}
+		s.grpc = proto.NewReportUsersServiceClient(conn)
 	}
-	s.grpc = proto.NewReportUsersServiceClient(conn)
 
 	return nil
 }

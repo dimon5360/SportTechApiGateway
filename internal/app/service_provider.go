@@ -2,13 +2,14 @@ package app
 
 import (
 	endpoint "app/main/internal/endpoint"
+	authEndpoint "app/main/internal/endpoint/auth"
 	profileEndpoint "app/main/internal/endpoint/profile"
 	reportEndpoint "app/main/internal/endpoint/report"
 	userEndpoint "app/main/internal/endpoint/user"
 	"app/main/internal/repository"
 	profileRepo "app/main/internal/repository/profile"
 	reportRepo "app/main/internal/repository/report"
-	userRepo "app/main/internal/repository/user"
+	tokenRepo "app/main/internal/repository/token"
 	"app/main/internal/service"
 	userService "app/main/internal/service/user"
 	"app/main/pkg/utils"
@@ -22,21 +23,22 @@ const (
 
 type ServiceProvider struct {
 	service service.Interface
+
+	eUser    endpoint.Interface
+	eProfile endpoint.Interface
+	eReport  endpoint.Interface
+	eAuth    endpoint.Interface
+
+	rUser    repository.Interface
+	rProfile repository.Interface
+	rReport  repository.Interface
+	rToken   repository.Interface
 }
 
 const serviceEnv = "./config/service.env"
 
 func NewServiceProvider() *ServiceProvider {
-
-	return &ServiceProvider{
-		service: getUserService(),
-	}
-}
-
-func (sp *ServiceProvider) Init() {
-	if err := sp.service.Init(); err != nil {
-		log.Fatal(err)
-	}
+	return &ServiceProvider{}
 }
 
 func (sp *ServiceProvider) Config() {
@@ -56,40 +58,79 @@ func (sp *ServiceProvider) Config() {
 	env.Load(redisEnv, mongoEnv)
 }
 
-func getUserService() service.Interface {
-	return userService.NewUserService(getUserEndpoint(), getProfileEndpoint(), getReportEndpoint())
+func (sp *ServiceProvider) Init() {
+	sp.initUserService()
 }
 
-func getUserEndpoint() endpoint.Interface {
-	point, err := userEndpoint.NewUserEndpoint(getUserRepository())
-	if err != nil {
+func (sp *ServiceProvider) initUserService() {
+	sp.service = userService.NewUserService(
+		sp.getUserEndpoint(),
+		sp.getProfileEndpoint(),
+		sp.getReportEndpoint(),
+		sp.getAuthEndpoint())
+
+	if err := sp.service.Init(); err != nil {
 		log.Fatal(err)
 	}
-	return point
 }
-func getProfileEndpoint() endpoint.Interface {
-	point, err := profileEndpoint.NewProfileEndpoint(getProfileRepository())
-	if err != nil {
-		log.Fatal(err)
+
+func (sp *ServiceProvider) getUserEndpoint() endpoint.Interface {
+	sp.eUser = userEndpoint.NewUserEndpoint(sp.userRepository())
+	if sp.eUser == nil {
+		log.Fatal("Failed endpoint creation")
 	}
-	return point
+	return sp.eUser
 }
-func getReportEndpoint() endpoint.Interface {
-	point, err := reportEndpoint.NewReportEndpoint(getReportRepository())
-	if err != nil {
-		log.Fatal(err)
+
+func (sp *ServiceProvider) getProfileEndpoint() endpoint.Interface {
+	if sp.eProfile == nil {
+		sp.eProfile = profileEndpoint.NewProfileEndpoint(sp.profileRepository())
 	}
-	return point
+	return sp.eProfile
 }
 
-func getUserRepository() repository.Interface {
-	return userRepo.NewUserRepository()
+func (sp *ServiceProvider) getReportEndpoint() endpoint.Interface {
+	if sp.eReport == nil {
+		sp.eReport = reportEndpoint.NewReportEndpoint(sp.reportRepository())
+	}
+	return sp.eReport
 }
 
-func getProfileRepository() repository.Interface {
-	return profileRepo.NewProfileRepository()
+func (sp *ServiceProvider) getAuthEndpoint() endpoint.Interface {
+	if sp.eAuth == nil {
+		sp.eAuth = authEndpoint.NewAuthEndpoint(sp.userRepository(), sp.tokenRepository())
+	}
+	return sp.eAuth
 }
 
-func getReportRepository() repository.Interface {
-	return reportRepo.NewReportRepository()
+func (sp *ServiceProvider) userRepository() repository.Interface {
+
+	if sp.rUser == nil {
+		sp.rUser = reportRepo.NewReportRepository()
+	}
+	return sp.rUser
+}
+
+func (sp *ServiceProvider) profileRepository() repository.Interface {
+
+	if sp.rProfile == nil {
+		sp.rProfile = profileRepo.NewProfileRepository()
+	}
+	return sp.rProfile
+}
+
+func (sp *ServiceProvider) reportRepository() repository.Interface {
+
+	if sp.rReport == nil {
+		sp.rReport = reportRepo.NewReportRepository()
+	}
+	return sp.rReport
+}
+
+func (sp *ServiceProvider) tokenRepository() repository.Interface {
+
+	if sp.rToken == nil {
+		sp.rToken = tokenRepo.NewTokenRepository()
+	}
+	return sp.rToken
 }

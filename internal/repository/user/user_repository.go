@@ -17,6 +17,8 @@ type userRepository struct {
 	grpc proto.AuthUsersServiceClient
 }
 
+const userRepositoryKey = "USER_GRPC_HOST"
+
 func NewUserRepository() repository.Interface {
 
 	return &userRepository{}
@@ -24,17 +26,19 @@ func NewUserRepository() repository.Interface {
 
 func (s *userRepository) Init() error {
 
-	host, err := utils.Env().Value("USER_GRPC_HOST")
-	if err != nil {
-		log.Fatal(err)
-	}
+	if s.grpc == nil {
+		host, err := utils.Env().Value(userRepositoryKey)
+		if err != nil {
+			log.Fatal(err)
+		}
 
-	conn, err := grpc.Dial(host, grpc.WithTransportCredentials(insecure.NewCredentials()))
+		conn, err := grpc.Dial(host, grpc.WithTransportCredentials(insecure.NewCredentials()))
 
-	if err != nil {
-		log.Fatalf("did not connect: %v", err)
+		if err != nil {
+			log.Fatalf("did not connect: %v", err)
+		}
+		s.grpc = proto.NewAuthUsersServiceClient(conn)
 	}
-	s.grpc = proto.NewAuthUsersServiceClient(conn)
 
 	return nil
 }

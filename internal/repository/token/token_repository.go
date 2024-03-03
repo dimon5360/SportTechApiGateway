@@ -13,36 +13,47 @@ import (
 	"context"
 )
 
-const invalidRedisReq = "invalid redis request"
+const (
+	invalidRedisReq  = "invalid redis request"
+	redisHostKey     = "REDIS_DB_HOST"
+	redisPasswordKey = "REDIS_ADMIN_PASSWORD"
+)
 
 type redisRepository struct {
 	client *redis.Client
 }
 
-func NewRedisRepository() repository.Interface {
-	return &redisRepository{
-		client: nil,
+var repo *redisRepository
+
+func NewTokenRepository() repository.Interface {
+	if repo == nil {
+		repo = &redisRepository{
+			client: nil,
+		}
 	}
+	return repo
 }
 
 func (r *redisRepository) Init() error {
 
-	ip, err := utils.Env().Value("REDIS_DB_HOST")
-	if err != nil {
-		log.Fatal(err)
-	}
-	pass, err := utils.Env().Value("REDIS_HOST_PASSWORD")
-	if err != nil {
-		log.Fatal(err)
-	}
+	if r.client == nil {
+		env := utils.Env()
+		ip, err := env.Value(redisHostKey)
+		if err != nil {
+			log.Fatal(err)
+		}
+		pass, err := env.Value(redisPasswordKey)
+		if err != nil {
+			log.Fatal(err)
+		}
 
-	opt := redis.Options{
-		Addr:     ip,
-		Password: pass, // no password set
-		DB:       0,    // use default DB
+		opt := redis.Options{
+			Addr:     ip,
+			Password: pass, // no password set
+			DB:       0,    // use default DB
+		}
+		r.client = redis.NewClient(&opt)
 	}
-
-	r.client = redis.NewClient(&opt)
 	return nil
 }
 
