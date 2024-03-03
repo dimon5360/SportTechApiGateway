@@ -1,13 +1,12 @@
 package endpoint
 
 import (
+	"app/main/internal/endpoint"
 	constants "app/main/internal/endpoint/common"
-	model "app/main/internal/model"
 	repository "app/main/internal/repository"
-	"app/main/internal/storage"
-	"encoding/json"
 	"log"
 	"net/http"
+	"strconv"
 
 	proto "github.com/dimon5360/SportTechProtos/gen/go/proto"
 	"github.com/gin-gonic/gin"
@@ -17,31 +16,27 @@ type reportEndpoint struct {
 	repo repository.Interface
 }
 
-func NewReportEndpoint(repo repository.Interface) *reportEndpoint {
-	return &reportEndpoint{
-		repo: repo,
+func NewReportEndpoint(repo ...repository.Interface) (endpoint.Interface, error) {
+	if len(repo) > 1 {
+		return nil, nil
 	}
+	return &reportEndpoint{
+		repo: repo[0],
+	}, nil
 }
 
 func (e *reportEndpoint) Get(c *gin.Context) {
 
 	ID := c.Params.ByName("user_id")
-
-	info := storage.Redis().Get(ID)
-
-	var user model.UserInfo
-
-	err := json.Unmarshal(info, &user)
+	userId, err := strconv.ParseUint(ID, 10, 64)
 	if err != nil {
-		log.Println(err.Error())
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": constants.InvalidRequestArgs,
-		})
+		log.Println("Invalid conversion from string to uint64")
+		c.Status(http.StatusInternalServerError)
 		return
 	}
 
 	res, err := e.repo.Get(&proto.GetReportRequest{
-		UserId: user.Id,
+		UserId: userId,
 	})
 
 	if err != nil {
@@ -82,19 +77,15 @@ func (e *reportEndpoint) Post(c *gin.Context) {
 		return
 	}
 
-	info := storage.Redis().Get(req.UserId)
-
-	var user model.UserInfo
-	if err := json.Unmarshal(info, &user); err != nil {
-		log.Println(err.Error())
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": constants.InvalidRequestArgs,
-		})
+	userId, err := strconv.ParseUint(req.UserId, 10, 64)
+	if err != nil {
+		log.Println("Invalid conversion from string to uint64")
+		c.Status(http.StatusInternalServerError)
 		return
 	}
 
 	reportReq := proto.AddReportRequst{
-		UserId: user.Id,
+		UserId: userId,
 		Report: req.Document,
 	}
 

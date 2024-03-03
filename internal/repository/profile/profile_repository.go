@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"app/main/internal/repository"
 	"app/main/pkg/utils"
 	"context"
 	"fmt"
@@ -16,13 +17,18 @@ type profileRepository struct {
 	grpc proto.ProfileUsersServiceClient
 }
 
-func NewProfileRepository() *profileRepository {
+func NewProfileRepository() repository.Interface {
 	return &profileRepository{}
 }
 
 func (s *profileRepository) Init() error {
 
-	conn, err := grpc.Dial(utils.Env().Value("PROFILE_GRPC_HOST"), grpc.WithTransportCredentials(insecure.NewCredentials()))
+	host, err := utils.Env().Value("PROFILE_GRPC_HOST")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	conn, err := grpc.Dial(host, grpc.WithTransportCredentials(insecure.NewCredentials()))
 
 	if err != nil {
 		log.Fatalf("did not connect: %v", err)

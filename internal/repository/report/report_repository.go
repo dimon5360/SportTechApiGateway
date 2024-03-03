@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"app/main/internal/repository"
 	"app/main/pkg/utils"
 	"context"
 	"fmt"
@@ -16,14 +17,18 @@ type reportRepository struct {
 	grpc proto.ReportUsersServiceClient
 }
 
-func NewReportRepository() *reportRepository {
+func NewReportRepository() repository.Interface {
 	return &reportRepository{}
 }
 
 func (s *reportRepository) Init() error {
 
-	conn, err := grpc.Dial(utils.Env().Value("REPORT_GRPC_HOST"), grpc.WithTransportCredentials(insecure.NewCredentials()))
+	host, err := utils.Env().Value("REPORT_GRPC_HOST")
+	if err != nil {
+		log.Fatal(err)
+	}
 
+	conn, err := grpc.Dial(host, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		log.Fatalf("did not connect: %v", err)
 	}

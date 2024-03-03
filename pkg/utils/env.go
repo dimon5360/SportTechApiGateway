@@ -2,6 +2,7 @@ package utils
 
 import (
 	"bufio"
+	"fmt"
 	"log"
 	"os"
 	"strings"
@@ -53,9 +54,9 @@ func (h *envHandler) Load(paths ...string) {
 	}
 }
 
-func (h *envHandler) Value(key string) string {
+func (h *envHandler) Value(key string) (string, error) {
 	if val, ok := h.dict[key]; ok {
-		return val
+		return val, nil
 	}
-	return "UNDEFINED"
+	return "UNDEFINED", fmt.Errorf("undefined key: %s", key)
 }

@@ -1,13 +1,12 @@
 package endpoint
 
 import (
+	"app/main/internal/endpoint"
 	constants "app/main/internal/endpoint/common"
-	"app/main/internal/model"
 	"app/main/internal/repository"
-	"app/main/internal/storage"
-	"encoding/json"
 	"log"
 	"net/http"
+	"strconv"
 
 	proto "github.com/dimon5360/SportTechProtos/gen/go/proto"
 	"github.com/gin-gonic/gin"
@@ -17,31 +16,27 @@ type userEndpoint struct {
 	repo repository.Interface
 }
 
-func NewUserEndpoint(repo repository.Interface) *userEndpoint {
-	return &userEndpoint{
-		repo: repo,
+func NewUserEndpoint(repo ...repository.Interface) (endpoint.Interface, error) {
+	if len(repo) > 1 {
+		return nil, nil
 	}
+	return &userEndpoint{
+		repo: repo[0],
+	}, nil
 }
 
 func (e *userEndpoint) Get(c *gin.Context) {
 
 	ID := c.Params.ByName("id")
-
-	var user model.UserInfo
-
-	info := storage.Redis().Get(ID)
-
-	err := json.Unmarshal(info, &user)
+	userId, err := strconv.ParseUint(ID, 10, 64)
 	if err != nil {
-		log.Println(err.Error())
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": constants.InvalidRequestArgs,
-		})
+		log.Println("Invalid conversion from string to uint64")
+		c.Status(http.StatusInternalServerError)
 		return
 	}
 
 	res, err := e.repo.Get(&proto.GetUserRequest{
-		Id: user.Id,
+		Id: userId,
 	})
 
 	if err != nil {

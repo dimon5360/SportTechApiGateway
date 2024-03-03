@@ -10,6 +10,7 @@ func main() {
 	a := app.New()
 
 	if err := a.Init(); err != nil {
+
 		log.Fatal(err)
 	}
 

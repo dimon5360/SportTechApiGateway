@@ -1,6 +1,7 @@
 package grpc_service
 
 import (
+	"app/main/internal/repository"
 	"app/main/pkg/utils"
 	"context"
 	"fmt"
@@ -16,14 +17,19 @@ type userRepository struct {
 	grpc proto.AuthUsersServiceClient
 }
 
-func NewUserRepository() *userRepository {
+func NewUserRepository() repository.Interface {
 
 	return &userRepository{}
 }
 
 func (s *userRepository) Init() error {
 
-	conn, err := grpc.Dial(utils.Env().Value("USER_GRPC_HOST"), grpc.WithTransportCredentials(insecure.NewCredentials()))
+	host, err := utils.Env().Value("USER_GRPC_HOST")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	conn, err := grpc.Dial(host, grpc.WithTransportCredentials(insecure.NewCredentials()))
 
 	if err != nil {
 		log.Fatalf("did not connect: %v", err)

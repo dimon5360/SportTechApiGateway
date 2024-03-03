@@ -1,7 +1,6 @@
 package app
 
 import (
-	"app/main/internal/storage"
 	"app/main/pkg/utils"
 	"fmt"
 	"log"
@@ -17,14 +16,15 @@ func New() *App {
 
 func (a *App) Init() error {
 
-	fmt.Println("SportTech user API service v." + utils.Env().Value("SERVICE_VERSION"))
-
 	a.sp = NewServiceProvider()
-	a.sp.Congig()
+	a.sp.Config()
 	a.sp.Init()
 
-	storage.InitRedis()
-
+	version, err := utils.Env().Value("SERVICE_VERSION")
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println("SportTech user API service v." + version)
 	return nil
 }
 
