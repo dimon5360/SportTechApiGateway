@@ -7,6 +7,8 @@ import (
 	"log"
 	"net/http"
 
+	"app/main/internal/middleware"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -25,9 +27,11 @@ type userService struct {
 	profile endpoint.Interface
 	report  endpoint.Interface
 	auth    endpoint.Interface
+
+	jwt middleware.Token
 }
 
-func New(endpoints ...endpoint.Interface) service.Interface {
+func New(jwt middleware.Token, endpoints ...endpoint.Interface) service.Interface {
 	if len(endpoints) != 4 {
 		log.Fatal("invalid endpoints number")
 		return nil
@@ -38,6 +42,8 @@ func New(endpoints ...endpoint.Interface) service.Interface {
 		profile: endpoints[1],
 		report:  endpoints[2],
 		auth:    endpoints[3],
+
+		jwt: jwt,
 	}
 
 	s.engine = gin.Default()
@@ -57,9 +63,6 @@ func (s *userService) Init() error {
 		log.Fatal(err)
 	}
 	return nil
-}
-func (s *userService) Middleware(mw func(c *gin.Context)) {
-	s.engine.Use(mw)
 }
 
 func (s *userService) initStatic() error {
@@ -81,18 +84,22 @@ func (s *userService) initEndpoints() error {
 	s.engine.GET("/", endpoint.Index)
 	s.engine.GET("/ping", endpoint.Ping)
 
-	route := s.engine.Group("/api/v1")
+	public := s.engine.Group("/api/v1")
+	public.Use(s.jwt.Validate())
 	{
-		route.GET("/user/get/:id", s.user.Get)
-		route.POST("/user/signup", s.user.Post)
+		public.GET("/user/get", s.jwt.Validate(), s.user.Get)
 
-		route.GET("/profile/get/:user_id", s.profile.Get)
-		route.POST("/profile/create", s.profile.Post)
+		public.GET("/profile/get/:user_id", s.jwt.Validate(), s.profile.Get)
+		public.POST("/profile/create", s.jwt.Validate(), s.profile.Post)
 
-		route.POST("/report/get/:user_id", s.report.Get)
-		route.POST("/report/post", s.report.Post)
+		public.POST("/report/get/:user_id", s.jwt.Validate(), s.report.Get)
+		public.POST("/report/post", s.jwt.Validate(), s.report.Post)
+	}
 
-		route.POST("/user/login", s.auth.Post)
+	private := s.engine.Group("/api/v1")
+	{
+		private.POST("/user/signup", s.user.Post)
+		private.POST("/user/login", s.auth.Post, s.jwt.Generate())
 	}
 
 	s.engine.NoRoute(func(c *gin.Context) {

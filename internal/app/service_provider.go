@@ -9,11 +9,11 @@ import (
 	"app/main/internal/middleware"
 	"app/main/internal/repository"
 	profileRepository "app/main/internal/repository/profile"
+	redisRepository "app/main/internal/repository/redis"
 	reportRepository "app/main/internal/repository/report"
-	tokenRepository "app/main/internal/repository/token"
 	userRepository "app/main/internal/repository/user"
 	"app/main/internal/service"
-	userSerivce "app/main/internal/service/user"
+	userService "app/main/internal/service/user"
 	"app/main/pkg/utils"
 	"log"
 )
@@ -65,12 +65,12 @@ func (sp *ServiceProvider) Init() {
 }
 
 func (sp *ServiceProvider) initUserService() {
-	sp.service = userSerivce.New(sp.getUserEndpoint(),
+	sp.service = userService.New(middleware.NewJWT(sp.redisRepository()),
+		sp.getUserEndpoint(),
 		sp.getProfileEndpoint(),
 		sp.getReportEndpoint(),
 		sp.getAuthEndpoint())
 
-	sp.service.Middleware(middleware.TokenValidation(sp.rToken))
 	if err := sp.service.Init(); err != nil {
 
 		log.Fatal(err)
@@ -101,7 +101,7 @@ func (sp *ServiceProvider) getReportEndpoint() endpoint.Interface {
 
 func (sp *ServiceProvider) getAuthEndpoint() endpoint.Interface {
 	if sp.eAuth == nil {
-		sp.eAuth = authEndpoint.New(sp.userRepository(), sp.tokenRepository())
+		sp.eAuth = authEndpoint.New(sp.userRepository(), sp.redisRepository())
 	}
 	return sp.eAuth
 }
@@ -127,9 +127,9 @@ func (sp *ServiceProvider) reportRepository() repository.Interface {
 	return sp.rReport
 }
 
-func (sp *ServiceProvider) tokenRepository() repository.Interface {
+func (sp *ServiceProvider) redisRepository() repository.Interface {
 	if sp.rToken == nil {
-		sp.rToken = tokenRepository.New()
+		sp.rToken = redisRepository.New()
 	}
 	return sp.rToken
 }

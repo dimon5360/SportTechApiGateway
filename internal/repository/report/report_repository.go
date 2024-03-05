@@ -21,9 +21,9 @@ func New() repository.Interface {
 	return &reportRepository{}
 }
 
-func (s *reportRepository) Init() error {
+func (r *reportRepository) Init() error {
 
-	if s.grpc == nil {
+	if r.grpc == nil {
 		host, err := utils.Env().Value("REPORT_GRPC_HOST")
 		if err != nil {
 			log.Fatal(err)
@@ -33,30 +33,38 @@ func (s *reportRepository) Init() error {
 		if err != nil {
 			log.Fatalf("did not connect: %v", err)
 		}
-		s.grpc = proto.NewReportUsersServiceClient(conn)
+		r.grpc = proto.NewReportUsersServiceClient(conn)
 	}
 
 	return nil
 }
 
-func (s *reportRepository) Add(req interface{}) (interface{}, error) {
+func (r *reportRepository) Add(req interface{}) (interface{}, error) {
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
 
 	if val, ok := req.(*proto.AddReportRequst); ok {
-		return s.grpc.AddReport(ctx, val)
+		return r.grpc.AddReport(ctx, val)
 	}
 	return nil, fmt.Errorf("invalid input parameter")
 }
 
-func (s *reportRepository) Get(req interface{}) (interface{}, error) {
+func (r *reportRepository) Get(req interface{}) (interface{}, error) {
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
 
 	if val, ok := req.(*proto.GetReportRequest); ok {
-		return s.grpc.GetReport(ctx, val)
+		return r.grpc.GetReport(ctx, val)
 	}
 	return nil, fmt.Errorf("invalid input parameter")
+}
+
+func (r *reportRepository) IsExist(req interface{}) (bool, error) {
+	return true, nil
+}
+
+func (r *reportRepository) Verify(req interface{}) (interface{}, error) {
+	return 1, nil
 }

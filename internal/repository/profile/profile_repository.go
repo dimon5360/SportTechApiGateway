@@ -21,9 +21,9 @@ func New() repository.Interface {
 	return &profileRepository{}
 }
 
-func (s *profileRepository) Init() error {
+func (r *profileRepository) Init() error {
 
-	if s.grpc == nil {
+	if r.grpc == nil {
 		host, err := utils.Env().Value("PROFILE_GRPC_HOST")
 		if err != nil {
 			log.Fatal(err)
@@ -34,29 +34,37 @@ func (s *profileRepository) Init() error {
 		if err != nil {
 			log.Fatalf("did not connect: %v", err)
 		}
-		s.grpc = proto.NewProfileUsersServiceClient(conn)
+		r.grpc = proto.NewProfileUsersServiceClient(conn)
 	}
 	return nil
 }
 
-func (s *profileRepository) Add(req interface{}) (interface{}, error) {
+func (r *profileRepository) Add(req interface{}) (interface{}, error) {
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
 
 	if val, ok := req.(*proto.CreateProfileRequst); ok {
-		return s.grpc.CreateProfile(ctx, val)
+		return r.grpc.CreateProfile(ctx, val)
 	}
 	return nil, fmt.Errorf("invalid input parameter")
 }
 
-func (s *profileRepository) Get(req interface{}) (interface{}, error) {
+func (r *profileRepository) Get(req interface{}) (interface{}, error) {
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
 
 	if val, ok := req.(*proto.GetProfileRequest); ok {
-		return s.grpc.GetProfile(ctx, val)
+		return r.grpc.GetProfile(ctx, val)
 	}
 	return nil, fmt.Errorf("invalid input parameter")
+}
+
+func (r *profileRepository) IsExist(req interface{}) (bool, error) {
+	return true, nil
+}
+
+func (r *profileRepository) Verify(req interface{}) (interface{}, error) {
+	return 1, nil
 }

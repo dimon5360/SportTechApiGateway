@@ -2,7 +2,6 @@ package endpoint
 
 import (
 	"app/main/internal/endpoint"
-	constants "app/main/internal/endpoint/common"
 	"app/main/internal/repository"
 	"log"
 	"net/http"
@@ -76,7 +75,7 @@ func (e *profileEndpoint) Post(c *gin.Context) {
 	if err := c.Bind(&req); err != nil {
 		log.Println(err.Error())
 		c.JSON(http.StatusBadRequest, gin.H{
-			"error": constants.InvalidRequestArgs,
+			"error": endpoint.InvalidRequestArgs,
 		})
 		return
 	}

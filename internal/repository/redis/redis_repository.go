@@ -88,3 +88,11 @@ func (r *redisRepository) Get(req interface{}) (interface{}, error) {
 	}
 	return []byte(val), nil
 }
+
+func (r *redisRepository) IsExist(req interface{}) (bool, error) {
+	return true, nil
+}
+
+func (r *redisRepository) Verify(req interface{}) (interface{}, error) {
+	return 1, nil
+}

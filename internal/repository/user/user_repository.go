@@ -24,9 +24,9 @@ func New() repository.Interface {
 	return &userRepository{}
 }
 
-func (s *userRepository) Init() error {
+func (r *userRepository) Init() error {
 
-	if s.grpc == nil {
+	if r.grpc == nil {
 		host, err := utils.Env().Value(userRepositoryKey)
 		if err != nil {
 			log.Fatal(err)
@@ -37,32 +37,42 @@ func (s *userRepository) Init() error {
 		if err != nil {
 			log.Fatalf("did not connect: %v", err)
 		}
-		s.grpc = proto.NewAuthUsersServiceClient(conn)
+		r.grpc = proto.NewAuthUsersServiceClient(conn)
 	}
 
 	return nil
 }
 
-func (s *userRepository) Get(req interface{}) (interface{}, error) {
+func (r *userRepository) Get(req interface{}) (interface{}, error) {
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
 
 	if val, ok := req.(*proto.GetUserRequest); ok {
-		return s.grpc.GetUser(ctx, val)
+		return r.grpc.GetUser(ctx, val)
 	}
 	return nil, fmt.Errorf("invalid input parameter")
 }
 
-func (s *userRepository) Add(req interface{}) (interface{}, error) {
+func (r *userRepository) Add(req interface{}) (interface{}, error) {
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
 
 	if val, ok := req.(*proto.CreateUserRequst); ok {
-		return s.grpc.CreateUser(ctx, val)
+		return r.grpc.CreateUser(ctx, val)
 	}
 	return nil, fmt.Errorf("invalid input parameter")
+}
+
+func (r *userRepository) IsExist(req interface{}) (bool, error) {
+	return true, nil
+}
+
+func (r *userRepository) Verify(req interface{}) (interface{}, error) {
+	return &proto.UserInfoResponse{
+		Id: 1,
+	}, nil
 }
 
 // func (s *userRepository) Auth(req *proto.AuthUserRequest) (*proto.UserInfoResponse, error) {

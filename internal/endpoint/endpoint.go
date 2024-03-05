@@ -1,6 +1,7 @@
 package endpoint
 
 import (
+	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -20,5 +21,16 @@ func Index(c *gin.Context) {
 func Ping(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"Message": "Hello from server",
+	})
+}
+
+func ProcessingFailed(c *gin.Context, err error, message string, status int) {
+
+	if err != nil {
+		log.Println(err.Error())
+	}
+
+	c.JSON(status, gin.H{
+		"error": message,
 	})
 }

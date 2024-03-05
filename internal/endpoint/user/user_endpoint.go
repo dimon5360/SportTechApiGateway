@@ -2,7 +2,6 @@ package endpoint
 
 import (
 	"app/main/internal/endpoint"
-	constants "app/main/internal/endpoint/common"
 	"app/main/internal/repository"
 	"log"
 	"net/http"
@@ -32,7 +31,7 @@ func New(repo ...repository.Interface) endpoint.Interface {
 
 func (e *userEndpoint) Get(c *gin.Context) {
 
-	ID := c.Params.ByName("id")
+	ID := c.Params.ByName("user_id")
 	userId, err := strconv.ParseUint(ID, 10, 64)
 	if err != nil {
 		log.Println("Invalid conversion from string to uint64")
@@ -73,7 +72,7 @@ func (e *userEndpoint) Post(c *gin.Context) {
 	if err := c.Bind(&req); err != nil {
 		log.Println(err.Error())
 		c.JSON(http.StatusBadRequest, gin.H{
-			"error": constants.InvalidRequestArgs,
+			"error": endpoint.InvalidRequestArgs,
 		})
 		return
 	}
