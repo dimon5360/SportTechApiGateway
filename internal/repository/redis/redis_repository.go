@@ -14,7 +14,8 @@ import (
 )
 
 const (
-	invalidRedisReq  = "invalid redis request"
+	invalidRedisReq = "invalid redis request"
+
 	redisHostKey     = "REDIS_HOST"
 	redisPasswordKey = "REDIS_ADMIN_PASSWORD"
 )

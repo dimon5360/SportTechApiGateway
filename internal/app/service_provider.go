@@ -6,7 +6,7 @@ import (
 	profileEndpoint "app/main/internal/endpoint/profile"
 	reportEndpoint "app/main/internal/endpoint/report"
 	userEndpoint "app/main/internal/endpoint/user"
-	"app/main/internal/middleware"
+	middleware "app/main/internal/middleware/jwt"
 	"app/main/internal/repository"
 	profileRepository "app/main/internal/repository/profile"
 	redisRepository "app/main/internal/repository/redis"
@@ -61,7 +61,7 @@ func (sp *ServiceProvider) Init() *ServiceProvider {
 }
 
 func (sp *ServiceProvider) initUserService() {
-	sp.service = userService.New(middleware.NewJWT(sp.redisRepository()),
+	sp.service = userService.New(middleware.New(sp.redisRepository()),
 		sp.getUserEndpoint(),
 		sp.getProfileEndpoint(),
 		sp.getReportEndpoint(),
@@ -74,7 +74,7 @@ func (sp *ServiceProvider) initUserService() {
 }
 
 func (sp *ServiceProvider) getUserEndpoint() endpoint.Interface {
-	sp.eUser = userEndpoint.New(sp.userRepository())
+	sp.eUser = userEndpoint.New(sp.userRepository(), sp.profileRepository())
 	if sp.eUser == nil {
 		log.Fatal("Failed endpoint creation")
 	}

@@ -45,7 +45,7 @@ func (e *profileEndpoint) Get(c *gin.Context) {
 
 	if err != nil {
 		log.Printf("could not get profile info: %v", err)
-		c.Redirect(http.StatusFound, "/profile/create")
+		c.Redirect(http.StatusFound, "/create-profile")
 		return
 	}
 
@@ -96,7 +96,8 @@ func (e *profileEndpoint) Post(c *gin.Context) {
 
 	if err != nil {
 		log.Printf("Creation profile failed: %v", err)
-		c.String(http.StatusConflict, "Profile already exists")
+		c.Redirect(http.StatusFound, "/profile/"+req.UserId)
+
 		return
 	}
 
@@ -105,7 +106,7 @@ func (e *profileEndpoint) Post(c *gin.Context) {
 			"profile_id": val.Id,
 		})
 
-		c.Redirect(http.StatusFound, "/profile/get/"+req.UserId)
+		c.Redirect(http.StatusFound, "/profile/"+req.UserId)
 		return
 	}
 

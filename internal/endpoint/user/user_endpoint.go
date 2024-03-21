@@ -7,20 +7,22 @@ import (
 	"net/http"
 	"strconv"
 
-	proto "github.com/dimon5360/SportTechProtos/gen/go/proto"
+	"github.com/dimon5360/SportTechProtos/gen/go/proto"
 	"github.com/gin-gonic/gin"
 )
 
 type userEndpoint struct {
-	user repository.Interface
+	user    repository.Interface
+	profile repository.Interface
 }
 
 func New(repo ...repository.Interface) endpoint.Interface {
-	if len(repo) != 1 {
+	if len(repo) != 2 {
 		return nil
 	}
 	e := &userEndpoint{
-		user: repo[0],
+		user:    repo[0],
+		profile: repo[1],
 	}
 
 	if err := e.user.Init(); err != nil {
@@ -46,6 +48,15 @@ func (e *userEndpoint) Get(c *gin.Context) {
 	if err != nil {
 		log.Printf("Getting user info failed: %v", err)
 		c.Status(http.StatusInternalServerError)
+		return
+	}
+
+	isExist, err := e.profile.IsExist(&proto.GetProfileRequest{
+		UserId: userId,
+	})
+
+	if !isExist {
+		c.Redirect(http.StatusFound, "/create-profile")
 		return
 	}
 

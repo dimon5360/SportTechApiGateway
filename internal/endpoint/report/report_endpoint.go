@@ -109,7 +109,7 @@ func (e *reportEndpoint) Post(c *gin.Context) {
 			"user_id": val.UserId, // TODO: #1 further replace to report ID
 		})
 
-		c.Redirect(http.StatusFound, "/profile/get/"+req.UserId)
+		c.Redirect(http.StatusFound, "/profile/"+req.UserId)
 		return
 	}
 

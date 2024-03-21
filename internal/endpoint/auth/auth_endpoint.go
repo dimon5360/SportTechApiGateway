@@ -59,6 +59,8 @@ func (e *authEndpoint) Post(c *gin.Context) {
 		return
 	}
 
+	log.Println(req)
+
 	response, err := e.user.Verify(&proto.AuthUserRequest{
 		Email:    req.Email,
 		Password: req.Password,
@@ -74,5 +76,7 @@ func (e *authEndpoint) Post(c *gin.Context) {
 		endpoint.ProcessingFailed(c, err, "invalid convert int to string", http.StatusBadRequest)
 		return
 	}
+	log.Printf("auth user %d", info.Id)
+
 	c.AddParam("user_id", strconv.FormatUint(info.Id, 10))
 }

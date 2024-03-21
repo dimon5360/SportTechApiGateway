@@ -63,7 +63,19 @@ func (r *profileRepository) Get(req interface{}) (interface{}, error) {
 }
 
 func (r *profileRepository) IsExist(req interface{}) (bool, error) {
-	return true, nil
+
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
+
+	if val, ok := req.(*proto.GetProfileRequest); ok {
+		resp, err := r.grpc.GetProfile(ctx, val)
+		if err != nil {
+			return false, fmt.Errorf("profile doesn't exist")
+		}
+
+		return resp.Id != 0, nil
+	}
+	return false, fmt.Errorf("invalid input parameter")
 }
 
 func (r *profileRepository) Verify(req interface{}) (interface{}, error) {

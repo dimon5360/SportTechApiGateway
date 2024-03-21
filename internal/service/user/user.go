@@ -84,22 +84,25 @@ func (s *userService) initEndpoints() error {
 	s.engine.GET("/", endpoint.Index)
 	s.engine.GET("/ping", endpoint.Ping)
 
+	s.engine.POST("/register", s.user.Post)
+
 	public := s.engine.Group("/api/v1")
 	public.Use(s.jwt.Validate())
 	{
-		public.GET("/user/get", s.jwt.Validate(), s.user.Get)
+		public.GET("/user/:user_id", s.user.Get)
 
-		public.GET("/profile/get/:user_id", s.jwt.Validate(), s.profile.Get)
-		public.POST("/profile/create", s.jwt.Validate(), s.profile.Post)
+		public.GET("/profile/:user_id", s.profile.Get)
+		public.POST("/create-profile/:user_id", s.profile.Post)
 
-		public.POST("/report/get/:user_id", s.jwt.Validate(), s.report.Get)
-		public.POST("/report/post", s.jwt.Validate(), s.report.Post)
+		public.POST("/report/:user_id", s.report.Get)
+		public.POST("/create-report/:user_id", s.report.Post)
+
+		public.POST("/refresh-token", s.jwt.Refresh())
 	}
 
 	private := s.engine.Group("/api/v1")
 	{
-		private.POST("/user/signup", s.user.Post)
-		private.POST("/user/login", s.auth.Post, s.jwt.Generate())
+		private.POST("/login", s.auth.Post, s.jwt.Generate())
 	}
 
 	s.engine.NoRoute(func(c *gin.Context) {
