@@ -3,10 +3,10 @@ package repository
 import (
 	"app/main/internal/repository"
 	model "app/main/internal/repository/model"
-	"app/main/pkg/utils"
 	"fmt"
 	"github.com/redis/go-redis/v9"
 	"log"
+	"os"
 )
 
 import (
@@ -15,7 +15,7 @@ import (
 
 const (
 	invalidRedisReq  = "invalid redis request"
-	redisHostKey     = "REDIS_DB_HOST"
+	redisHostKey     = "REDIS_HOST"
 	redisPasswordKey = "REDIS_ADMIN_PASSWORD"
 )
 
@@ -37,18 +37,17 @@ func New() repository.Interface {
 func (r *redisRepository) Init() error {
 
 	if r.client == nil {
-		env := utils.Env()
-		ip, err := env.Value(redisHostKey)
-		if err != nil {
-			log.Fatal(err)
+		host := os.Getenv(redisHostKey)
+		if len(host) == 0 {
+			log.Fatal("redis host not found")
 		}
-		pass, err := env.Value(redisPasswordKey)
-		if err != nil {
-			log.Fatal(err)
+		pass := os.Getenv(redisPasswordKey)
+		if len(pass) == 0 {
+			log.Fatal("redis password not found")
 		}
 
 		opt := redis.Options{
-			Addr:     ip,
+			Addr:     host,
 			Password: pass, // no password set
 			DB:       0,    // use default DB
 		}

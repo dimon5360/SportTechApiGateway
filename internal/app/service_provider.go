@@ -14,8 +14,9 @@ import (
 	userRepository "app/main/internal/repository/user"
 	"app/main/internal/service"
 	userService "app/main/internal/service/user"
-	"app/main/pkg/utils"
+	"app/main/pkg/env"
 	"log"
+	"os"
 )
 
 const (
@@ -37,31 +38,26 @@ type ServiceProvider struct {
 	rToken   repository.Interface
 }
 
-const serviceEnv = "./config/service.env"
-
 func NewServiceProvider() *ServiceProvider {
 	return &ServiceProvider{}
 }
 
-func (sp *ServiceProvider) Config() {
-	env := utils.Env()
+func (sp *ServiceProvider) Init() *ServiceProvider {
+	env.Init()
 
-	env.Load(serviceEnv)
-	redisEnv, err := env.Value(redisEnvKey)
-	if err != nil {
-		log.Fatal(err)
+	redisEnv := os.Getenv(redisEnvKey)
+	if len(redisEnv) == 0 {
+		log.Fatal("redis environment not found")
 	}
 
-	mongoEnv, err := env.Value(mongoEnvKey)
-	if err != nil {
-		log.Fatal(err)
+	mongoEnv := os.Getenv(mongoEnvKey)
+	if len(mongoEnv) == 0 {
+		log.Fatal("mongo environment not found")
 	}
 
-	env.Load(redisEnv, mongoEnv)
-}
-
-func (sp *ServiceProvider) Init() {
+	env.LoadFile(redisEnv, mongoEnv)
 	sp.initUserService()
+	return sp
 }
 
 func (sp *ServiceProvider) initUserService() {

@@ -2,20 +2,22 @@ package repository
 
 import (
 	"app/main/internal/repository"
-	"app/main/pkg/utils"
 	"context"
 	"fmt"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 	"log"
+	"os"
 	"time"
 
 	"github.com/dimon5360/SportTechProtos/gen/go/proto"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials/insecure"
 )
 
 type reportRepository struct {
 	grpc proto.ReportUsersServiceClient
 }
+
+const reportRepositoryKey = "REPORT_GRPC_HOST"
 
 func New() repository.Interface {
 	return &reportRepository{}
@@ -24,11 +26,10 @@ func New() repository.Interface {
 func (r *reportRepository) Init() error {
 
 	if r.grpc == nil {
-		host, err := utils.Env().Value("REPORT_GRPC_HOST")
-		if err != nil {
-			log.Fatal(err)
+		host := os.Getenv(reportRepositoryKey)
+		if len(host) == 0 {
+			log.Fatal("report repository environment not found")
 		}
-
 		conn, err := grpc.Dial(host, grpc.WithTransportCredentials(insecure.NewCredentials()))
 		if err != nil {
 			log.Fatalf("did not connect: %v", err)

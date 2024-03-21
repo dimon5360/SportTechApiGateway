@@ -2,20 +2,22 @@ package repository
 
 import (
 	"app/main/internal/repository"
-	"app/main/pkg/utils"
 	"context"
 	"fmt"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 	"log"
+	"os"
 	"time"
 
 	"github.com/dimon5360/SportTechProtos/gen/go/proto"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials/insecure"
 )
 
 type profileRepository struct {
 	grpc proto.ProfileUsersServiceClient
 }
+
+const profileRepositoryKey = "PROFILE_GRPC_HOST"
 
 func New() repository.Interface {
 	return &profileRepository{}
@@ -24,11 +26,10 @@ func New() repository.Interface {
 func (r *profileRepository) Init() error {
 
 	if r.grpc == nil {
-		host, err := utils.Env().Value("PROFILE_GRPC_HOST")
-		if err != nil {
-			log.Fatal(err)
+		host := os.Getenv(profileRepositoryKey)
+		if len(host) == 0 {
+			log.Fatal("profile repository environment not found")
 		}
-
 		conn, err := grpc.Dial(host, grpc.WithTransportCredentials(insecure.NewCredentials()))
 
 		if err != nil {

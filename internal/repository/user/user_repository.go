@@ -2,15 +2,15 @@ package grpc_service
 
 import (
 	"app/main/internal/repository"
-	"app/main/pkg/utils"
 	"context"
 	"fmt"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 	"log"
+	"os"
 	"time"
 
 	"github.com/dimon5360/SportTechProtos/gen/go/proto"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials/insecure"
 )
 
 type userRepository struct {
@@ -27,9 +27,9 @@ func New() repository.Interface {
 func (r *userRepository) Init() error {
 
 	if r.grpc == nil {
-		host, err := utils.Env().Value(userRepositoryKey)
-		if err != nil {
-			log.Fatal(err)
+		host := os.Getenv(userRepositoryKey)
+		if len(host) == 0 {
+			log.Fatal("user repository environment not found")
 		}
 
 		conn, err := grpc.Dial(host, grpc.WithTransportCredentials(insecure.NewCredentials()))

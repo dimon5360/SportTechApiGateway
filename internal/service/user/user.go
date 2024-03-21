@@ -3,9 +3,9 @@ package service
 import (
 	"app/main/internal/endpoint"
 	"app/main/internal/service"
-	"app/main/pkg/utils"
 	"log"
 	"net/http"
+	"os"
 
 	"app/main/internal/middleware"
 
@@ -109,25 +109,23 @@ func (s *userService) initEndpoints() error {
 }
 
 func (s *userService) Run() error {
-	env := utils.Env()
 
-	host, err := env.Value(serviceHostKey)
-	if err != nil {
-		log.Fatal(err)
+	host := os.Getenv(serviceHostKey)
+	if len(host) == 0 {
+		log.Fatal("host environment not found")
 	}
-	cert, err := env.Value(sslCertPath)
-	if err != nil {
-		log.Fatal(err)
+	key := os.Getenv(sslKetPath)
+	if len(key) == 0 {
+		log.Fatal("ssl key environment not found")
 	}
-	key, err := env.Value(sslKetPath)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	err = s.engine.RunTLS(host, cert, key)
-	if err != nil {
-		log.Fatal(err)
+	cert := os.Getenv(sslCertPath)
+	if len(cert) == 0 {
+		log.Fatal("ssl cert environment not found")
 	}
 
+	err := s.engine.RunTLS(host, cert, key)
+	if err != nil {
+		log.Fatal(err)
+	}
 	return nil
 }

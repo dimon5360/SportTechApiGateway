@@ -1,28 +1,29 @@
 package app
 
 import (
-	"app/main/pkg/utils"
 	"fmt"
 	"log"
+	"os"
 )
 
 type App struct {
 	sp *ServiceProvider
 }
 
+const serviceVersionKey = "SERVICE_VERSION"
+
 func New() *App {
-	return &App{}
+	return &App{
+		sp: NewServiceProvider(),
+	}
 }
 
 func (a *App) Init() error {
-
-	a.sp.Config()
-	a.sp = NewServiceProvider()
 	a.sp.Init()
 
-	version, err := utils.Env().Value("SERVICE_VERSION")
-	if err != nil {
-		log.Fatal(err)
+	version := os.Getenv(serviceVersionKey)
+	if len(version) == 0 {
+		log.Fatal("Service version not found")
 	}
 	fmt.Println("SportTech user API service v." + version)
 	return nil
