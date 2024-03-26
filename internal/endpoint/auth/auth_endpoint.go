@@ -3,11 +3,12 @@ package endpoint
 import (
 	"app/main/internal/endpoint"
 	"app/main/internal/repository"
-	"github.com/dimon5360/SportTechProtos/gen/go/proto"
-	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
 	"strconv"
+
+	"github.com/dimon5360/SportTechProtos/gen/go/proto"
+	"github.com/gin-gonic/gin"
 )
 
 type authEndpoint struct {
@@ -45,8 +46,6 @@ func (e *authEndpoint) Get(c *gin.Context) {
 
 func (e *authEndpoint) Post(c *gin.Context) {
 
-	log.Println("auth user")
-
 	type authUserRequest struct {
 		Email    string `json:"email"`
 		Password string `json:"password"`
@@ -58,8 +57,6 @@ func (e *authEndpoint) Post(c *gin.Context) {
 		endpoint.ProcessingFailed(c, err, endpoint.InvalidRequestArgs, http.StatusBadRequest)
 		return
 	}
-
-	log.Println(req)
 
 	response, err := e.user.Verify(&proto.AuthUserRequest{
 		Email:    req.Email,

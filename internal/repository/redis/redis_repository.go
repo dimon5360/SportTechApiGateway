@@ -3,21 +3,19 @@ package repository
 import (
 	"app/main/internal/repository"
 	model "app/main/internal/repository/model"
+	"context"
 	"fmt"
-	"github.com/redis/go-redis/v9"
 	"log"
 	"os"
-)
 
-import (
-	"context"
+	"github.com/redis/go-redis/v9"
 )
 
 const (
 	invalidRedisReq = "invalid redis request"
 
 	redisHostKey     = "REDIS_HOST"
-	redisPasswordKey = "REDIS_ADMIN_PASSWORD"
+	redisPasswordKey = "REDIS_PASSWORD"
 )
 
 type redisRepository struct {

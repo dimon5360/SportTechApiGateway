@@ -96,13 +96,12 @@ func (s *userService) initEndpoints() error {
 
 		public.POST("/report/:user_id", s.report.Get)
 		public.POST("/create-report/:user_id", s.report.Post)
-
-		public.POST("/refresh-token", s.jwt.Refresh())
 	}
 
 	private := s.engine.Group("/api/v1")
 	{
 		private.POST("/login", s.auth.Post, s.jwt.Generate())
+		private.POST("/auth/refresh", s.jwt.Refresh(), s.jwt.Generate())
 	}
 
 	s.engine.NoRoute(func(c *gin.Context) {
