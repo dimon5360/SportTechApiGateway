@@ -12,30 +12,18 @@ import (
 )
 
 type authEndpoint struct {
-	user  repository.Interface
-	redis repository.Interface
+	repo repository.Interface
 }
 
-func New(repo ...repository.Interface) endpoint.Interface {
-	if len(repo) != 2 {
-		log.Fatalln()
-		return nil
-	}
-
+func New(authRepository repository.Interface) (endpoint.Interface, error) {
 	e := &authEndpoint{
-		user:  repo[0],
-		redis: repo[1],
+		repo: authRepository,
 	}
 
-	if err := e.user.Init(); err != nil {
-		log.Fatal(err)
+	if err := e.repo.Init(); err != nil {
+		return nil, err
 	}
-
-	if err := e.redis.Init(); err != nil {
-		log.Fatal(err)
-	}
-
-	return e
+	return e, nil
 }
 
 func (e *authEndpoint) Get(c *gin.Context) {
@@ -58,7 +46,7 @@ func (e *authEndpoint) Post(c *gin.Context) {
 		return
 	}
 
-	response, err := e.user.Verify(&proto.AuthUserRequest{
+	response, err := e.repo.Verify(&proto.AuthUserRequest{
 		Email:    req.Email,
 		Password: req.Password,
 	})

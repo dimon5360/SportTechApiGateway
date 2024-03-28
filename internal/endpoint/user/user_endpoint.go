@@ -12,23 +12,18 @@ import (
 )
 
 type userEndpoint struct {
-	user    repository.Interface
-	profile repository.Interface
+	repo repository.Interface
 }
 
-func New(repo ...repository.Interface) endpoint.Interface {
-	if len(repo) != 2 {
-		return nil
-	}
+func New(userRepository repository.Interface) (endpoint.Interface, error) {
 	e := &userEndpoint{
-		user:    repo[0],
-		profile: repo[1],
+		repo: userRepository,
 	}
 
-	if err := e.user.Init(); err != nil {
-		log.Fatal(err)
+	if err := e.repo.Init(); err != nil {
+		return nil, err
 	}
-	return e
+	return e, nil
 }
 
 func (e *userEndpoint) Get(c *gin.Context) {
@@ -41,7 +36,7 @@ func (e *userEndpoint) Get(c *gin.Context) {
 		return
 	}
 
-	res, err := e.user.Get(&proto.GetUserRequest{
+	res, err := e.repo.Get(&proto.GetUserRequest{
 		Id: userId,
 	})
 
@@ -51,7 +46,7 @@ func (e *userEndpoint) Get(c *gin.Context) {
 		return
 	}
 
-	isExist, err := e.profile.IsExist(&proto.GetProfileRequest{
+	isExist, err := e.repo.IsExist(&proto.GetProfileRequest{
 		UserId: userId,
 	})
 
@@ -88,7 +83,7 @@ func (e *userEndpoint) Post(c *gin.Context) {
 		return
 	}
 
-	res, err := e.user.Add(&proto.CreateUserRequst{
+	res, err := e.repo.Add(&proto.CreateUserRequst{
 		Email:    req.Email,
 		Password: req.Password,
 	})

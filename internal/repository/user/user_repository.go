@@ -1,14 +1,15 @@
-package grpc_service
+package repository
 
 import (
 	"app/main/internal/repository"
 	"context"
 	"fmt"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials/insecure"
 	"log"
 	"os"
 	"time"
+
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 
 	"github.com/dimon5360/SportTechProtos/gen/go/proto"
 )
@@ -33,13 +34,12 @@ func (r *userRepository) Init() error {
 		}
 
 		conn, err := grpc.Dial(host, grpc.WithTransportCredentials(insecure.NewCredentials()))
-
 		if err != nil {
 			log.Fatalf("did not connect: %v", err)
 		}
+
 		r.grpc = proto.NewAuthUsersServiceClient(conn)
 	}
-
 	return nil
 }
 

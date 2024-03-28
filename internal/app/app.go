@@ -1,42 +1,42 @@
 package app
 
 import (
+	"app/main/internal/service"
 	"fmt"
-	"log"
-	"os"
 )
 
-type App struct {
-	sp *ServiceProvider
+type IApp interface {
+	Init() error
+	Run() error
+}
+
+type app struct {
+	provider IServiceProvider
+
+	service service.Interface
 }
 
 const serviceVersionKey = "SERVICE_VERSION"
 
-func New() *App {
-	return &App{
-		sp: NewServiceProvider(),
+func New() IApp {
+	return &app{
+		provider: NewServiceProvider(),
 	}
 }
 
-func (a *App) Init() error {
-	a.sp.Init()
+func (a *app) Init() error {
 
-	version := os.Getenv(serviceVersionKey)
-	if len(version) == 0 {
-		log.Fatal("Service version not found")
+	service, err := a.provider.Init()
+	if err != nil {
+		return err
 	}
-	fmt.Println("SportTech user API service v." + version)
+
+	a.service = service
 	return nil
 }
 
-func (a *App) Run() error {
+func (a *app) Run() error {
 
 	fmt.Println("service running ...")
-
-	err := a.sp.service.Run()
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	return nil
+	return a.service.Run()
 }

@@ -15,19 +15,15 @@ type reportEndpoint struct {
 	repo repository.Interface
 }
 
-func New(repo ...repository.Interface) endpoint.Interface {
-	if len(repo) != 1 {
-		return nil
-	}
-
+func New(reportRepository repository.Interface) (endpoint.Interface, error) {
 	e := &reportEndpoint{
-		repo: repo[0],
+		repo: reportRepository,
 	}
 
 	if err := e.repo.Init(); err != nil {
-		log.Fatal(err)
+		return nil, err
 	}
-	return e
+	return e, nil
 }
 
 func (e *reportEndpoint) Get(c *gin.Context) {
@@ -106,7 +102,7 @@ func (e *reportEndpoint) Post(c *gin.Context) {
 
 	if val, ok := res.(*proto.ReportResponse); ok {
 		c.JSON(http.StatusOK, gin.H{
-			"user_id": val.UserId, // TODO: #1 further replace to report ID
+			"report_id": val.UserId,
 		})
 
 		c.Redirect(http.StatusFound, "/profile/"+req.UserId)
