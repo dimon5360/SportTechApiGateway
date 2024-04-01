@@ -7,7 +7,8 @@ import (
 	"net/http"
 	"strconv"
 
-	proto "github.com/dimon5360/SportTechProtos/gen/go/proto"
+	proto "proto/go"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -46,7 +47,7 @@ func (e *profileEndpoint) Get(c *gin.Context) {
 		return
 	}
 
-	if val, ok := res.(*proto.UserProfileResponse); ok {
+	if val, ok := res.(*proto.ProfileResponse); ok {
 		c.JSON(http.StatusOK, gin.H{
 			"username":  val.Username,
 			"firstname": val.Firstname,
@@ -61,14 +62,14 @@ func (e *profileEndpoint) Get(c *gin.Context) {
 
 func (e *profileEndpoint) Post(c *gin.Context) {
 
-	type createUserRequest struct {
+	type createProfileRequest struct {
 		Username  string `json:"username"`
 		Firstname string `json:"firstname"`
 		Lastname  string `json:"lastname"`
 		UserId    string `json:"user_id"`
 	}
 
-	var req createUserRequest
+	var req createProfileRequest
 	if err := c.Bind(&req); err != nil {
 		log.Println(err.Error())
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -84,7 +85,7 @@ func (e *profileEndpoint) Post(c *gin.Context) {
 		return
 	}
 
-	res, err := e.repo.Add(&proto.CreateProfileRequst{
+	res, err := e.repo.Add(&proto.CreateProfileRequest{
 		Username:  req.Username,
 		Firstname: req.Firstname,
 		Lastname:  req.Lastname,
@@ -98,7 +99,7 @@ func (e *profileEndpoint) Post(c *gin.Context) {
 		return
 	}
 
-	if val, ok := res.(*proto.UserProfileResponse); ok {
+	if val, ok := res.(*proto.ProfileResponse); ok {
 		c.JSON(http.StatusOK, gin.H{
 			"profile_id": val.Id,
 		})

@@ -10,14 +10,14 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 
-	"github.com/dimon5360/SportTechProtos/gen/go/proto"
+	proto "proto/go"
 )
 
 type reportRepository struct {
-	grpc proto.ReportUsersServiceClient
+	grpc proto.ReportServiceClient
 }
 
-const reportRepositoryKey = "REPORT_GRPC_HOST"
+const reportRepositoryKey = "REPORT_SERVICE_HOST"
 
 func New() repository.Interface {
 	return &reportRepository{}
@@ -36,7 +36,7 @@ func (r *reportRepository) Init() error {
 			return fmt.Errorf("did not connect: %v", err)
 		}
 
-		r.grpc = proto.NewReportUsersServiceClient(conn)
+		r.grpc = proto.NewReportServiceClient(conn)
 	}
 	return nil
 }
@@ -49,7 +49,7 @@ func (r *reportRepository) Add(req interface{}) (interface{}, error) {
 	if val, ok := req.(*proto.AddReportRequst); ok {
 		return r.grpc.AddReport(ctx, val)
 	}
-	return nil, fmt.Errorf("invalid input parameter")
+	return nil, fmt.Errorf(repository.InvalidInputParameter)
 }
 
 func (r *reportRepository) Get(req interface{}) (interface{}, error) {
@@ -60,13 +60,13 @@ func (r *reportRepository) Get(req interface{}) (interface{}, error) {
 	if val, ok := req.(*proto.GetReportRequest); ok {
 		return r.grpc.GetReport(ctx, val)
 	}
-	return nil, fmt.Errorf("invalid input parameter")
+	return nil, fmt.Errorf(repository.InvalidInputParameter)
 }
 
-func (r *reportRepository) IsExist(req interface{}) (bool, error) {
+func (r *reportRepository) Update(req interface{}) (interface{}, error) {
 	return true, nil
 }
 
-func (r *reportRepository) Verify(req interface{}) (interface{}, error) {
-	return 1, nil
+func (r *reportRepository) Delete(req interface{}) error {
+	return nil
 }

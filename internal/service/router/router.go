@@ -11,7 +11,7 @@ import (
 )
 
 const (
-	serviceHostKey = "SERVICE_HOST"
+	serviceHostKey = "GATEWAY_SERVICE_HOST"
 	sslCertPath    = "SSL_CERT_PATH"
 	sslKetPath     = "SSL_KEY_PATH"
 )
@@ -43,11 +43,15 @@ func (s *router) Init() error {
 
 	s.engine = gin.Default()
 
+	log.Println(s.engine)
+
 	s.engine.Use(gin.Logger())
 	s.engine.Use(gin.Recovery())
 
 	s.initStatic()
 	s.initEndpoints()
+
+	log.Println("gin initialized")
 
 	return nil
 }
@@ -59,6 +63,7 @@ func (s *router) Run() error {
 		log.Fatal("host environment not found")
 	}
 
+	log.Printf("listening host %s ...", host)
 	err := s.engine.Run(host)
 	if err != nil {
 		log.Fatal(err)

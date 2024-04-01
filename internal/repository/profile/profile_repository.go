@@ -11,14 +11,14 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 
-	"github.com/dimon5360/SportTechProtos/gen/go/proto"
+	proto "proto/go"
 )
 
 type profileRepository struct {
-	grpc proto.ProfileUsersServiceClient
+	grpc proto.UserServiceClient
 }
 
-const profileRepositoryKey = "USER_GRPC_HOST"
+const profileRepositoryKey = "USER_SERVICE_HOST"
 
 func New() repository.Interface {
 
@@ -38,9 +38,20 @@ func (r *profileRepository) Init() error {
 			log.Fatalf("did not connect: %v", err)
 		}
 
-		r.grpc = proto.NewProfileUsersServiceClient(conn)
+		r.grpc = proto.NewUserServiceClient(conn)
 	}
 	return nil
+}
+
+func (r *profileRepository) Add(req interface{}) (interface{}, error) {
+
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
+
+	if val, ok := req.(*proto.CreateProfileRequest); ok {
+		return r.grpc.CreateProfile(ctx, val)
+	}
+	return nil, fmt.Errorf(repository.InvalidInputParameter)
 }
 
 func (r *profileRepository) Get(req interface{}) (interface{}, error) {
@@ -51,26 +62,13 @@ func (r *profileRepository) Get(req interface{}) (interface{}, error) {
 	if val, ok := req.(*proto.GetProfileRequest); ok {
 		return r.grpc.GetProfile(ctx, val)
 	}
-	return nil, fmt.Errorf("invalid input parameter")
+	return nil, fmt.Errorf(repository.InvalidInputParameter)
 }
 
-func (r *profileRepository) Add(req interface{}) (interface{}, error) {
-
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
-	defer cancel()
-
-	if val, ok := req.(*proto.CreateProfileRequst); ok {
-		return r.grpc.CreateProfile(ctx, val)
-	}
-	return nil, fmt.Errorf("invalid input parameter")
-}
-
-func (r *profileRepository) IsExist(req interface{}) (bool, error) {
+func (r *profileRepository) Update(req interface{}) (interface{}, error) {
 	return true, nil
 }
 
-func (r *profileRepository) Verify(req interface{}) (interface{}, error) {
-	return &proto.UserInfoResponse{
-		Id: 1,
-	}, nil
+func (r *profileRepository) Delete(req interface{}) error {
+	return nil
 }

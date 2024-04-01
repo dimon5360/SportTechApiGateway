@@ -23,7 +23,6 @@ type IServiceProvider interface {
 }
 
 type provider struct {
-	service service.Interface
 }
 
 func NewServiceProvider() IServiceProvider {
@@ -42,20 +41,25 @@ func (p *provider) Init() (service.Interface, error) {
 	}
 
 	fmt.Println("SportTech API gateway v." + version)
+	log.Println("provider initialised")
 	return p.initUserService()
 }
 
-func (p *provider) Run() error {
-	return p.service.Run()
-}
-
 func (p *provider) initUserService() (service.Interface, error) {
-	return router.New(
+
+	service := router.New(
 		p.getAuthEndpoint(),
 		p.getUserEndpoint(),
 		p.getProfileEndpoint(),
 		p.getReportEndpoint(),
-	), nil
+	)
+
+	if err := service.Init(); err != nil {
+		return nil, err
+	}
+
+	log.Println("router created")
+	return service, nil
 }
 
 func (p *provider) getUserEndpoint() endpoint.Interface {

@@ -11,14 +11,16 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 
-	"github.com/dimon5360/SportTechProtos/gen/go/proto"
+	proto "proto/go"
 )
 
 type authRepository struct {
-	grpc proto.AuthUsersServiceClient
+	grpc proto.AuthServiceClient
 }
 
-const authRepositoryKey = "AUTH_GRPC_HOST"
+const (
+	authRepositoryKey = "AUTH_SERVICE_HOST"
+)
 
 func New() repository.Interface {
 
@@ -30,7 +32,7 @@ func (r *authRepository) Init() error {
 	if r.grpc == nil {
 		host := os.Getenv(authRepositoryKey)
 		if len(host) == 0 {
-			log.Fatal("user repository environment not found")
+			log.Fatal("auth repository environment not found")
 		}
 
 		conn, err := grpc.Dial(host, grpc.WithTransportCredentials(insecure.NewCredentials()))
@@ -38,7 +40,7 @@ func (r *authRepository) Init() error {
 			log.Fatalf("did not connect: %v", err)
 		}
 
-		r.grpc = proto.NewAuthUsersServiceClient(conn)
+		r.grpc = proto.NewAuthServiceClient(conn)
 	}
 	return nil
 }
@@ -48,10 +50,10 @@ func (r *authRepository) Get(req interface{}) (interface{}, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
 
-	if val, ok := req.(*proto.GetUserRequest); ok {
-		return r.grpc.GetUser(ctx, val)
+	if val, ok := req.(*proto.LoginUserRequest); ok {
+		return r.grpc.LoginUser(ctx, val)
 	}
-	return nil, fmt.Errorf("invalid input parameter")
+	return nil, fmt.Errorf(repository.InvalidInputParameter)
 }
 
 func (r *authRepository) Add(req interface{}) (interface{}, error) {
@@ -59,18 +61,23 @@ func (r *authRepository) Add(req interface{}) (interface{}, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
 
-	if val, ok := req.(*proto.CreateUserRequst); ok {
-		return r.grpc.CreateUser(ctx, val)
+	if val, ok := req.(*proto.RegisterUserRequest); ok {
+		return r.grpc.RegisterUser(ctx, val)
 	}
-	return nil, fmt.Errorf("invalid input parameter")
+	return nil, fmt.Errorf(repository.InvalidInputParameter)
 }
 
-func (r *authRepository) IsExist(req interface{}) (bool, error) {
-	return true, nil
+func (r *authRepository) Update(req interface{}) (interface{}, error) {
+
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
+
+	if val, ok := req.(*proto.RefreshTokenRequest); ok {
+		return r.grpc.RefreshToken(ctx, val)
+	}
+	return nil, fmt.Errorf(repository.InvalidInputParameter)
 }
 
-func (r *authRepository) Verify(req interface{}) (interface{}, error) {
-	return &proto.UserInfoResponse{
-		Id: 1,
-	}, nil
+func (r *authRepository) Delete(req interface{}) error {
+	return nil
 }

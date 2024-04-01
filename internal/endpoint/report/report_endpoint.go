@@ -7,7 +7,8 @@ import (
 	"net/http"
 	"strconv"
 
-	proto "github.com/dimon5360/SportTechProtos/gen/go/proto"
+	proto "proto/go"
+
 	"github.com/gin-gonic/gin"
 )
 

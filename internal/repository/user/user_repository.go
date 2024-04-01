@@ -11,14 +11,14 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 
-	"github.com/dimon5360/SportTechProtos/gen/go/proto"
+	proto "proto/go"
 )
 
 type userRepository struct {
-	grpc proto.AuthUsersServiceClient
+	grpc proto.UserServiceClient
 }
 
-const userRepositoryKey = "USER_GRPC_HOST"
+const userRepositoryKey = "USER_SERVICE_HOST"
 
 func New() repository.Interface {
 
@@ -38,9 +38,20 @@ func (r *userRepository) Init() error {
 			log.Fatalf("did not connect: %v", err)
 		}
 
-		r.grpc = proto.NewAuthUsersServiceClient(conn)
+		r.grpc = proto.NewUserServiceClient(conn)
 	}
 	return nil
+}
+
+func (r *userRepository) Add(req interface{}) (interface{}, error) {
+
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
+
+	if val, ok := req.(*proto.CreateUserRequest); ok {
+		return r.grpc.CreateUser(ctx, val)
+	}
+	return nil, fmt.Errorf(repository.InvalidInputParameter)
 }
 
 func (r *userRepository) Get(req interface{}) (interface{}, error) {
@@ -51,34 +62,13 @@ func (r *userRepository) Get(req interface{}) (interface{}, error) {
 	if val, ok := req.(*proto.GetUserRequest); ok {
 		return r.grpc.GetUser(ctx, val)
 	}
-	return nil, fmt.Errorf("invalid input parameter")
+	return nil, fmt.Errorf(repository.InvalidInputParameter)
 }
 
-func (r *userRepository) Add(req interface{}) (interface{}, error) {
-
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
-	defer cancel()
-
-	if val, ok := req.(*proto.CreateUserRequst); ok {
-		return r.grpc.CreateUser(ctx, val)
-	}
-	return nil, fmt.Errorf("invalid input parameter")
-}
-
-func (r *userRepository) IsExist(req interface{}) (bool, error) {
+func (r *userRepository) Update(req interface{}) (interface{}, error) {
 	return true, nil
 }
 
-func (r *userRepository) Verify(req interface{}) (interface{}, error) {
-	return &proto.UserInfoResponse{
-		Id: 1,
-	}, nil
+func (r *userRepository) Delete(req interface{}) error {
+	return nil
 }
-
-// func (s *userRepository) Auth(req *proto.AuthUserRequest) (*proto.UserInfoResponse, error) {
-
-// 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
-// 	defer cancel()
-
-// 	return s.grpc.AuthUser(ctx, req)
-// }

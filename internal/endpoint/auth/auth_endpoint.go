@@ -7,7 +7,8 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/dimon5360/SportTechProtos/gen/go/proto"
+	proto "proto/go"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -46,7 +47,7 @@ func (e *authEndpoint) Post(c *gin.Context) {
 		return
 	}
 
-	response, err := e.repo.Verify(&proto.AuthUserRequest{
+	response, err := e.repo.Add(&proto.LoginUserRequest{
 		Email:    req.Email,
 		Password: req.Password,
 	})
@@ -56,12 +57,11 @@ func (e *authEndpoint) Post(c *gin.Context) {
 		return
 	}
 
-	info, ok := response.(*proto.UserInfoResponse)
+	info, ok := response.(*proto.LoginUserResponse)
 	if !ok {
 		endpoint.ProcessingFailed(c, err, "invalid convert int to string", http.StatusBadRequest)
 		return
 	}
-	log.Printf("auth user %d", info.Id)
 
 	c.AddParam("user_id", strconv.FormatUint(info.Id, 10))
 }

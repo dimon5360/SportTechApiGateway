@@ -2,7 +2,7 @@ package app
 
 import (
 	"app/main/internal/service"
-	"fmt"
+	"log"
 )
 
 type IApp interface {
@@ -12,8 +12,7 @@ type IApp interface {
 
 type app struct {
 	provider IServiceProvider
-
-	service service.Interface
+	service  service.Interface
 }
 
 const serviceVersionKey = "SERVICE_VERSION"
@@ -37,6 +36,6 @@ func (a *app) Init() error {
 
 func (a *app) Run() error {
 
-	fmt.Println("service running ...")
+	log.Println("service running ...")
 	return a.service.Run()
 }

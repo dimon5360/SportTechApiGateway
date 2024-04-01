@@ -7,7 +7,8 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/dimon5360/SportTechProtos/gen/go/proto"
+	proto "proto/go"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -46,18 +47,9 @@ func (e *userEndpoint) Get(c *gin.Context) {
 		return
 	}
 
-	isExist, err := e.repo.IsExist(&proto.GetProfileRequest{
-		UserId: userId,
-	})
-
-	if !isExist {
-		c.Redirect(http.StatusFound, "/create-profile")
-		return
-	}
-
-	if val, ok := res.(*proto.UserInfoResponse); ok {
+	if val, ok := res.(*proto.UserResponse); ok {
 		c.JSON(http.StatusOK, gin.H{
-			"email": val.Email,
+			"email": val.GetEmail(),
 		})
 		return
 	}
@@ -83,7 +75,7 @@ func (e *userEndpoint) Post(c *gin.Context) {
 		return
 	}
 
-	res, err := e.repo.Add(&proto.CreateUserRequst{
+	res, err := e.repo.Add(&proto.CreateUserRequest{
 		Email:    req.Email,
 		Password: req.Password,
 	})
@@ -94,7 +86,7 @@ func (e *userEndpoint) Post(c *gin.Context) {
 		return
 	}
 
-	if val, ok := res.(*proto.UserInfoResponse); ok {
+	if val, ok := res.(*proto.UserResponse); ok {
 		c.JSON(http.StatusOK, gin.H{
 			"user_id": val.Id,
 		})
