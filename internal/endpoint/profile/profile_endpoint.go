@@ -13,10 +13,10 @@ import (
 )
 
 type profileEndpoint struct {
-	repo repository.Interface
+	repo repository.ProfileInterface
 }
 
-func New(profileRepository repository.Interface) (endpoint.Interface, error) {
+func New(profileRepository repository.ProfileInterface) (endpoint.Profile, error) {
 	e := &profileEndpoint{
 		repo: profileRepository,
 	}
@@ -37,7 +37,7 @@ func (e *profileEndpoint) Get(c *gin.Context) {
 		return
 	}
 
-	res, err := e.repo.Get(&proto.GetProfileRequest{
+	res, err := e.repo.Read(&proto.GetProfileRequest{
 		UserId: userId,
 	})
 
@@ -85,7 +85,7 @@ func (e *profileEndpoint) Post(c *gin.Context) {
 		return
 	}
 
-	res, err := e.repo.Add(&proto.CreateProfileRequest{
+	res, err := e.repo.Create(&proto.CreateProfileRequest{
 		Username:  req.Username,
 		Firstname: req.Firstname,
 		Lastname:  req.Lastname,

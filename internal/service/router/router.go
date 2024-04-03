@@ -19,23 +19,21 @@ const (
 type router struct {
 	engine *gin.Engine
 
-	userEndp    endpoint.Interface
-	profileEndp endpoint.Interface
-	reportEndp  endpoint.Interface
-	authEndp    endpoint.Interface
+	authEndpoint    endpoint.Auth
+	profileEndpoint endpoint.Profile
+	reportEndpoint  endpoint.Report
 }
 
 func New(
-	authEndpoint endpoint.Interface,
-	userEndpoint endpoint.Interface,
-	profileEndpoint endpoint.Interface,
-	reportEndpoint endpoint.Interface,
+	authEndpoint endpoint.Auth,
+	profileEndpoint endpoint.Profile,
+	reportEndpoint endpoint.Report,
 ) service.Interface {
+
 	return &router{
-		authEndp:    authEndpoint,
-		userEndp:    userEndpoint,
-		profileEndp: profileEndpoint,
-		reportEndp:  reportEndpoint,
+		authEndpoint:    authEndpoint,
+		profileEndpoint: profileEndpoint,
+		reportEndpoint:  reportEndpoint,
 	}
 }
 
@@ -90,17 +88,15 @@ func (s *router) initEndpoints() {
 
 	api := s.engine.Group("/api/v1")
 	{
-		api.GET("/user/:user_id", s.userEndp.Get)
-		api.POST("/register", s.userEndp.Post)
+		api.POST("/login", s.authEndpoint.Login)
+		api.POST("/token-refresh", s.authEndpoint.RefreshLogin)
+		api.POST("/register", s.authEndpoint.Register)
 
-		api.GET("/profile/:user_id", s.profileEndp.Get)
-		api.POST("/profile/create", s.profileEndp.Post)
+		api.GET("/profile/:user_id", s.profileEndpoint.Get)
+		api.POST("/profile/create", s.profileEndpoint.Post)
 
-		api.POST("/report/:user_id", s.reportEndp.Get)
-		api.POST("/report/create", s.reportEndp.Post)
-
-		api.POST("/login", s.authEndp.Post)
-		api.POST("/token/refresh", s.authEndp.Get)
+		api.POST("/report/:user_id", s.reportEndpoint.Get)
+		api.POST("/report/create", s.reportEndpoint.Post)
 	}
 
 	s.engine.NoRoute(func(c *gin.Context) {

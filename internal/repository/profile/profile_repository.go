@@ -20,7 +20,7 @@ type profileRepository struct {
 
 const profileRepositoryKey = "USER_SERVICE_HOST"
 
-func New() repository.Interface {
+func New() repository.ProfileInterface {
 
 	return &profileRepository{}
 }
@@ -43,7 +43,7 @@ func (r *profileRepository) Init() error {
 	return nil
 }
 
-func (r *profileRepository) Add(req interface{}) (interface{}, error) {
+func (r *profileRepository) Create(req interface{}) (interface{}, error) {
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
@@ -54,7 +54,7 @@ func (r *profileRepository) Add(req interface{}) (interface{}, error) {
 	return nil, fmt.Errorf(repository.InvalidInputParameter)
 }
 
-func (r *profileRepository) Get(req interface{}) (interface{}, error) {
+func (r *profileRepository) Read(req interface{}) (interface{}, error) {
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()

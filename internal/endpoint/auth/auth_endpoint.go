@@ -3,20 +3,16 @@ package endpoint
 import (
 	"app/main/internal/endpoint"
 	"app/main/internal/repository"
-	"log"
 	"net/http"
-	"strconv"
-
-	proto "proto/go"
 
 	"github.com/gin-gonic/gin"
 )
 
 type authEndpoint struct {
-	repo repository.Interface
+	repo repository.AuthInterface
 }
 
-func New(authRepository repository.Interface) (endpoint.Interface, error) {
+func New(authRepository repository.AuthInterface) (endpoint.Auth, error) {
 	e := &authEndpoint{
 		repo: authRepository,
 	}
@@ -27,41 +23,44 @@ func New(authRepository repository.Interface) (endpoint.Interface, error) {
 	return e, nil
 }
 
-func (e *authEndpoint) Get(c *gin.Context) {
+func (e *authEndpoint) Login(c *gin.Context) {
 
-	log.Println("unimplemented method")
-	c.Status(http.StatusOK)
-}
-
-func (e *authEndpoint) Post(c *gin.Context) {
-
-	type authUserRequest struct {
+	type loginRequest struct {
 		Email    string `json:"email"`
 		Password string `json:"password"`
 	}
 
-	var req authUserRequest
-	err := c.Bind(&req)
+	req := loginRequest{
+		Email:    "admin@test.com",
+		Password: "admin1234",
+	}
+
+	_, err := e.repo.Login(req)
 	if err != nil {
-		endpoint.ProcessingFailed(c, err, endpoint.InvalidRequestArgs, http.StatusBadRequest)
-		return
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
 	}
 
-	response, err := e.repo.Add(&proto.LoginUserRequest{
-		Email:    req.Email,
-		Password: req.Password,
-	})
+	c.Status(http.StatusOK)
+}
 
-	if err != nil {
-		endpoint.ProcessingFailed(c, err, "Authentication failed", http.StatusUnauthorized)
-		return
+func (e *authEndpoint) Register(c *gin.Context) {
+
+	type registerRequest struct {
+		Email    string `json:"email"`
+		Password string `json:"password"`
 	}
 
-	info, ok := response.(*proto.LoginUserResponse)
-	if !ok {
-		endpoint.ProcessingFailed(c, err, "invalid convert int to string", http.StatusBadRequest)
-		return
+	var _ registerRequest
+}
+
+func (e *authEndpoint) RefreshLogin(c *gin.Context) {
+
+	type refreshTokenRequest struct {
+		Id           uint64 `json:"id"`
+		RefreshToken string `json:"refresh-token"`
 	}
 
-	c.AddParam("user_id", strconv.FormatUint(info.Id, 10))
+	var _ refreshTokenRequest
 }

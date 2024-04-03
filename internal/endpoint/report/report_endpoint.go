@@ -13,10 +13,10 @@ import (
 )
 
 type reportEndpoint struct {
-	repo repository.Interface
+	repo repository.ReportInterface
 }
 
-func New(reportRepository repository.Interface) (endpoint.Interface, error) {
+func New(reportRepository repository.ReportInterface) (endpoint.Report, error) {
 	e := &reportEndpoint{
 		repo: reportRepository,
 	}
@@ -37,7 +37,7 @@ func (e *reportEndpoint) Get(c *gin.Context) {
 		return
 	}
 
-	res, err := e.repo.Get(&proto.GetReportRequest{
+	res, err := e.repo.Read(&proto.GetReportRequest{
 		UserId: userId,
 	})
 
@@ -91,7 +91,7 @@ func (e *reportEndpoint) Post(c *gin.Context) {
 		Report: req.Document,
 	}
 
-	res, err := e.repo.Add(&reportReq)
+	res, err := e.repo.Create(&reportReq)
 
 	if err != nil {
 		log.Printf("Creation report failed: %v", err)

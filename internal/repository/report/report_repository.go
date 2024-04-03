@@ -19,7 +19,7 @@ type reportRepository struct {
 
 const reportRepositoryKey = "REPORT_SERVICE_HOST"
 
-func New() repository.Interface {
+func New() repository.ProfileInterface {
 	return &reportRepository{}
 }
 
@@ -41,7 +41,7 @@ func (r *reportRepository) Init() error {
 	return nil
 }
 
-func (r *reportRepository) Add(req interface{}) (interface{}, error) {
+func (r *reportRepository) Create(req interface{}) (interface{}, error) {
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
@@ -52,7 +52,7 @@ func (r *reportRepository) Add(req interface{}) (interface{}, error) {
 	return nil, fmt.Errorf(repository.InvalidInputParameter)
 }
 
-func (r *reportRepository) Get(req interface{}) (interface{}, error) {
+func (r *reportRepository) Read(req interface{}) (interface{}, error) {
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()

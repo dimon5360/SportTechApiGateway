@@ -7,9 +7,24 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type Interface interface {
+type User interface {
+	Get(c *gin.Context)
+}
+
+type Profile interface {
 	Get(c *gin.Context)
 	Post(c *gin.Context)
+}
+
+type Report interface {
+	Get(c *gin.Context)
+	Post(c *gin.Context)
+}
+
+type Auth interface {
+	Login(c *gin.Context)
+	Register(c *gin.Context)
+	RefreshLogin(c *gin.Context)
 }
 
 func Index(c *gin.Context) {

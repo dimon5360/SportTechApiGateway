@@ -22,7 +22,7 @@ const (
 	authRepositoryKey = "AUTH_SERVICE_HOST"
 )
 
-func New() repository.Interface {
+func New() repository.AuthInterface {
 
 	return &authRepository{}
 }
@@ -45,18 +45,23 @@ func (r *authRepository) Init() error {
 	return nil
 }
 
-func (r *authRepository) Get(req interface{}) (interface{}, error) {
+func (r *authRepository) Login(req interface{}) (interface{}, error) {
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
 
-	if val, ok := req.(*proto.LoginUserRequest); ok {
-		return r.grpc.LoginUser(ctx, val)
-	}
-	return nil, fmt.Errorf(repository.InvalidInputParameter)
+	return r.grpc.LoginUser(ctx, &proto.LoginUserRequest{
+		Email:    "admin@test.com",
+		Password: "admin1234",
+	})
+
+	// if val, ok := req.(*proto.LoginUserRequest); ok {
+	// 	return r.grpc.LoginUser(ctx, val)
+	// }
+	// return nil, fmt.Errorf(repository.InvalidInputParameter)
 }
 
-func (r *authRepository) Add(req interface{}) (interface{}, error) {
+func (r *authRepository) Register(req interface{}) (interface{}, error) {
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
@@ -67,7 +72,7 @@ func (r *authRepository) Add(req interface{}) (interface{}, error) {
 	return nil, fmt.Errorf(repository.InvalidInputParameter)
 }
 
-func (r *authRepository) Update(req interface{}) (interface{}, error) {
+func (r *authRepository) Refresh(req interface{}) (interface{}, error) {
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
@@ -76,8 +81,4 @@ func (r *authRepository) Update(req interface{}) (interface{}, error) {
 		return r.grpc.RefreshToken(ctx, val)
 	}
 	return nil, fmt.Errorf(repository.InvalidInputParameter)
-}
-
-func (r *authRepository) Delete(req interface{}) error {
-	return nil
 }

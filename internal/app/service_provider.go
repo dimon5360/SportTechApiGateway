@@ -5,11 +5,9 @@ import (
 	authEndpoint "app/main/internal/endpoint/auth"
 	profileEndpoint "app/main/internal/endpoint/profile"
 	reportEndpoint "app/main/internal/endpoint/report"
-	userEndpoint "app/main/internal/endpoint/user"
 	authRepository "app/main/internal/repository/auth"
 	profileRepository "app/main/internal/repository/profile"
 	reportRepository "app/main/internal/repository/report"
-	userRepository "app/main/internal/repository/user"
 	"app/main/internal/service"
 	router "app/main/internal/service/router"
 	"app/main/pkg/env"
@@ -18,14 +16,14 @@ import (
 	"os"
 )
 
-type IServiceProvider interface {
+type ProviderInterface interface {
 	Init() (service.Interface, error)
 }
 
 type provider struct {
 }
 
-func NewServiceProvider() IServiceProvider {
+func NewServiceProvider() ProviderInterface {
 	return &provider{}
 }
 
@@ -49,7 +47,6 @@ func (p *provider) initUserService() (service.Interface, error) {
 
 	service := router.New(
 		p.getAuthEndpoint(),
-		p.getUserEndpoint(),
 		p.getProfileEndpoint(),
 		p.getReportEndpoint(),
 	)
@@ -62,15 +59,7 @@ func (p *provider) initUserService() (service.Interface, error) {
 	return service, nil
 }
 
-func (p *provider) getUserEndpoint() endpoint.Interface {
-	endp, err := userEndpoint.New(userRepository.New())
-	if err != nil {
-		log.Fatal(err)
-	}
-	return endp
-}
-
-func (p *provider) getProfileEndpoint() endpoint.Interface {
+func (p *provider) getProfileEndpoint() endpoint.Profile {
 	endp, err := profileEndpoint.New(profileRepository.New())
 	if err != nil {
 		log.Fatal(err)
@@ -78,7 +67,7 @@ func (p *provider) getProfileEndpoint() endpoint.Interface {
 	return endp
 }
 
-func (p *provider) getReportEndpoint() endpoint.Interface {
+func (p *provider) getReportEndpoint() endpoint.Report {
 	endp, err := reportEndpoint.New(reportRepository.New())
 	if err != nil {
 		log.Fatal(err)
@@ -86,7 +75,7 @@ func (p *provider) getReportEndpoint() endpoint.Interface {
 	return endp
 }
 
-func (p *provider) getAuthEndpoint() endpoint.Interface {
+func (p *provider) getAuthEndpoint() endpoint.Auth {
 	endp, err := authEndpoint.New(authRepository.New())
 	if err != nil {
 		log.Fatal(err)

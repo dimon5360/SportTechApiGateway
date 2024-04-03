@@ -5,19 +5,19 @@ import (
 	"log"
 )
 
-type IApp interface {
+type AppInterface interface {
 	Init() error
 	Run() error
 }
 
 type app struct {
-	provider IServiceProvider
+	provider ProviderInterface
 	service  service.Interface
 }
 
 const serviceVersionKey = "SERVICE_VERSION"
 
-func New() IApp {
+func New() AppInterface {
 	return &app{
 		provider: NewServiceProvider(),
 	}
