@@ -29,8 +29,14 @@ func New(profileRepository repository.ProfileInterface) (endpoint.Profile, error
 
 func (e *profileEndpoint) Get(c *gin.Context) {
 
-	ID := c.Params.ByName("user_id")
-	userId, err := strconv.ParseUint(ID, 10, 64)
+	userId, err := c.Cookie("user_id")
+	if err != nil {
+		log.Println("cookie has no user id")
+		c.Status(http.StatusInternalServerError)
+		return
+	}
+
+	id, err := strconv.ParseUint(userId, 10, 64)
 	if err != nil {
 		log.Println("Invalid conversion from string to uint64")
 		c.Status(http.StatusInternalServerError)
@@ -38,7 +44,7 @@ func (e *profileEndpoint) Get(c *gin.Context) {
 	}
 
 	res, err := e.repo.Read(&proto.GetProfileRequest{
-		UserId: userId,
+		Id: id,
 	})
 
 	if err != nil {
@@ -66,7 +72,6 @@ func (e *profileEndpoint) Post(c *gin.Context) {
 		Username  string `json:"username"`
 		Firstname string `json:"firstname"`
 		Lastname  string `json:"lastname"`
-		UserId    string `json:"user_id"`
 	}
 
 	var req createProfileRequest
@@ -78,9 +83,9 @@ func (e *profileEndpoint) Post(c *gin.Context) {
 		return
 	}
 
-	userId, err := strconv.ParseUint(req.UserId, 10, 64)
+	userId, err := c.Cookie("user_id")
 	if err != nil {
-		log.Println("Invalid conversion from string to uint64")
+		log.Println("cookie has no user id")
 		c.Status(http.StatusInternalServerError)
 		return
 	}
@@ -89,12 +94,11 @@ func (e *profileEndpoint) Post(c *gin.Context) {
 		Username:  req.Username,
 		Firstname: req.Firstname,
 		Lastname:  req.Lastname,
-		UserId:    userId,
 	})
 
 	if err != nil {
 		log.Printf("Creation profile failed: %v", err)
-		c.Redirect(http.StatusFound, "/profile/"+req.UserId)
+		c.Redirect(http.StatusFound, "/profile/"+userId)
 
 		return
 	}
@@ -104,7 +108,7 @@ func (e *profileEndpoint) Post(c *gin.Context) {
 			"profile_id": val.Id,
 		})
 
-		c.Redirect(http.StatusFound, "/profile/"+req.UserId)
+		c.Redirect(http.StatusFound, "/profile/"+userId)
 		return
 	}
 

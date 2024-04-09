@@ -1,8 +1,11 @@
 package endpoint
 
 import (
+	"app/main/internal/dto"
 	"app/main/internal/endpoint"
 	"app/main/internal/repository"
+	"fmt"
+	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -25,23 +28,30 @@ func New(authRepository repository.AuthInterface) (endpoint.Auth, error) {
 
 func (e *authEndpoint) Login(c *gin.Context) {
 
-	type loginRequest struct {
-		Email    string `json:"email"`
-		Password string `json:"password"`
+	var req dto.RestLoginRequest
+	if err := c.BindJSON(&req); err != nil {
+		c.Status(http.StatusBadRequest)
+		return
 	}
 
-	req := loginRequest{
-		Email:    "admin@test.com",
-		Password: "admin1234",
-	}
+	log.Println("http login request:", req)
 
-	_, err := e.repo.Login(req)
+	user, err := e.repo.Login(&req)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
-			"error": err.Error(),
+			"error": err,
 		})
+		return
 	}
 
+	c.SetCookie("user_id", fmt.Sprintf("%d", user.Id), 0, "/", "", true, false)
+	c.SetCookie("access-token", user.AccessToken.GetValue(), user.AccessToken.GetAge(), "/", "", true, false)
+	c.SetCookie("refresh-token", user.RefrestToken.GetValue(), user.RefrestToken.GetAge(), "/", "", true, false)
+
+	if user.ProfileId == 0 {
+		c.Redirect(http.StatusFound, "/profile/create")
+		return
+	}
 	c.Status(http.StatusOK)
 }
 

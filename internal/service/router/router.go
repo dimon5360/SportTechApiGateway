@@ -89,14 +89,15 @@ func (s *router) initEndpoints() {
 	api := s.engine.Group("/api/v1")
 	{
 		api.POST("/login", s.authEndpoint.Login)
-		api.POST("/token-refresh", s.authEndpoint.RefreshLogin)
 		api.POST("/register", s.authEndpoint.Register)
 
-		api.GET("/profile/:user_id", s.profileEndpoint.Get)
-		api.POST("/profile/create", s.profileEndpoint.Post)
+		api.PUT("/token-refresh", s.authEndpoint.RefreshLogin)
 
-		api.POST("/report/:user_id", s.reportEndpoint.Get)
-		api.POST("/report/create", s.reportEndpoint.Post)
+		api.GET("/profile", s.profileEndpoint.Get)
+		api.POST("/profile", s.profileEndpoint.Post)
+
+		api.GET("/report", s.reportEndpoint.Get)
+		api.POST("/report", s.reportEndpoint.Post)
 	}
 
 	s.engine.NoRoute(func(c *gin.Context) {

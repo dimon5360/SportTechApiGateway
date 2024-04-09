@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"app/main/internal/dto"
 	"app/main/internal/repository"
 	"context"
 	"fmt"
@@ -45,20 +46,17 @@ func (r *authRepository) Init() error {
 	return nil
 }
 
-func (r *authRepository) Login(req interface{}) (interface{}, error) {
+func (r *authRepository) Login(req *dto.RestLoginRequest) (*dto.RestLoginResponse, error) {
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
 
-	return r.grpc.LoginUser(ctx, &proto.LoginUserRequest{
-		Email:    "admin@test.com",
-		Password: "admin1234",
-	})
+	grpcResponse, err := r.grpc.LoginUser(ctx, dto.ConvertRest2GrpcLoginRequest(req))
+	if err != nil {
+		return nil, err
+	}
 
-	// if val, ok := req.(*proto.LoginUserRequest); ok {
-	// 	return r.grpc.LoginUser(ctx, val)
-	// }
-	// return nil, fmt.Errorf(repository.InvalidInputParameter)
+	return dto.ConvertGrpc2RestLoginResponse(grpcResponse), nil
 }
 
 func (r *authRepository) Register(req interface{}) (interface{}, error) {
