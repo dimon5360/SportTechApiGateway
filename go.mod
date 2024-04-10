@@ -10,6 +10,13 @@ require (
 require (
 	github.com/chenzhuoyu/iasm v0.9.1 // indirect
 	github.com/golang/protobuf v1.5.4 // indirect
+	github.com/gookit/color v1.5.4 // indirect
+	github.com/gookit/goutil v0.6.15 // indirect
+	github.com/gookit/gsr v0.1.0 // indirect
+	github.com/gookit/slog v0.5.5 // indirect
+	github.com/valyala/bytebufferpool v1.0.0 // indirect
+	github.com/xo/terminfo v0.0.0-20220910002029-abceb7e1c41e // indirect
+	golang.org/x/sync v0.6.0 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20240401170217-c3f982113cda // indirect
 )
 

@@ -46,7 +46,7 @@ func (r *authRepository) Init() error {
 	return nil
 }
 
-func (r *authRepository) Login(req *dto.RestLoginRequest) (*dto.RestLoginResponse, error) {
+func (r *authRepository) Login(req *dto.RestAuthRequest) (*dto.RestLoginResponse, error) {
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()

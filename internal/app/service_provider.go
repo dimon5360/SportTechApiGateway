@@ -11,6 +11,7 @@ import (
 	"app/main/internal/service"
 	router "app/main/internal/service/router"
 	"app/main/pkg/env"
+	"app/main/pkg/logger"
 	"fmt"
 	"log"
 	"os"
@@ -33,12 +34,16 @@ func (p *provider) Init() (service.Interface, error) {
 		return nil, err
 	}
 
+	if err := logger.Init(); err != nil {
+		return nil, err
+	}
+
 	version := os.Getenv(serviceVersionKey)
 	if len(version) == 0 {
 		return nil, fmt.Errorf("service version not found")
 	}
 
-	fmt.Println("SportTech API gateway v." + version)
+	log.Println("SportTech API gateway v." + version)
 	log.Println("provider initialised")
 	return p.initUserService()
 }
@@ -62,7 +67,7 @@ func (p *provider) initUserService() (service.Interface, error) {
 func (p *provider) getProfileEndpoint() endpoint.Profile {
 	endp, err := profileEndpoint.New(profileRepository.New())
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal(err.Error())
 	}
 	return endp
 }
@@ -70,7 +75,7 @@ func (p *provider) getProfileEndpoint() endpoint.Profile {
 func (p *provider) getReportEndpoint() endpoint.Report {
 	endp, err := reportEndpoint.New(reportRepository.New())
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal(err.Error())
 	}
 	return endp
 }
@@ -78,7 +83,7 @@ func (p *provider) getReportEndpoint() endpoint.Report {
 func (p *provider) getAuthEndpoint() endpoint.Auth {
 	endp, err := authEndpoint.New(authRepository.New())
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal(err.Error())
 	}
 	return endp
 }

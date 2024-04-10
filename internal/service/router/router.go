@@ -41,8 +41,6 @@ func (s *router) Init() error {
 
 	s.engine = gin.Default()
 
-	log.Println(s.engine)
-
 	s.engine.Use(gin.Logger())
 	s.engine.Use(gin.Recovery())
 
@@ -88,10 +86,10 @@ func (s *router) initEndpoints() {
 
 	api := s.engine.Group("/api/v1")
 	{
-		api.POST("/login", s.authEndpoint.Login)
-		api.POST("/register", s.authEndpoint.Register)
+		api.POST("/auth/login", s.authEndpoint.Login)
+		api.POST("/auth/register", s.authEndpoint.Register)
 
-		api.PUT("/token-refresh", s.authEndpoint.RefreshLogin)
+		api.PUT("/auth/token-refresh", s.authEndpoint.RefreshLogin)
 
 		api.GET("/profile", s.profileEndpoint.Get)
 		api.POST("/profile", s.profileEndpoint.Post)

@@ -28,7 +28,7 @@ func New(authRepository repository.AuthInterface) (endpoint.Auth, error) {
 
 func (e *authEndpoint) Login(c *gin.Context) {
 
-	var req dto.RestLoginRequest
+	var req dto.RestAuthRequest
 	if err := c.BindJSON(&req); err != nil {
 		c.Status(http.StatusBadRequest)
 		return
@@ -57,12 +57,17 @@ func (e *authEndpoint) Login(c *gin.Context) {
 
 func (e *authEndpoint) Register(c *gin.Context) {
 
-	type registerRequest struct {
-		Email    string `json:"email"`
-		Password string `json:"password"`
+	var req dto.RestAuthRequest
+	if err := c.BindJSON(&req); err != nil {
+		c.Status(http.StatusBadRequest)
+		return
 	}
 
-	var _ registerRequest
+	log.Println("http register request:", req)
+
+	e.repo.Register(req)
+
+	c.Status(http.StatusOK)
 }
 
 func (e *authEndpoint) RefreshLogin(c *gin.Context) {

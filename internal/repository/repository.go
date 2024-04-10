@@ -6,7 +6,7 @@ const InvalidInputParameter string = "invalid input parameter"
 
 type AuthInterface interface {
 	Init() error
-	Login(req *dto.RestLoginRequest) (*dto.RestLoginResponse, error)
+	Login(req *dto.RestAuthRequest) (*dto.RestLoginResponse, error)
 	Register(interface{}) (interface{}, error)
 	Refresh(interface{}) (interface{}, error)
 }
