@@ -7,8 +7,15 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
+)
+
+const (
+	user_id_cookie_key      = "user_id"
+	access_token_cookie_key = "access-token"
+	refresh_token_key       = "refresh-token"
 )
 
 type authEndpoint struct {
@@ -28,7 +35,7 @@ func New(authRepository repository.AuthInterface) (endpoint.Auth, error) {
 
 func (e *authEndpoint) Login(c *gin.Context) {
 
-	var req dto.RestAuthRequest
+	var req dto.RestLoginRequest
 	if err := c.BindJSON(&req); err != nil {
 		c.Status(http.StatusBadRequest)
 		return
@@ -44,12 +51,12 @@ func (e *authEndpoint) Login(c *gin.Context) {
 		return
 	}
 
-	c.SetCookie("user_id", fmt.Sprintf("%d", user.Id), 0, "/", "", true, false)
-	c.SetCookie("access-token", user.AccessToken.GetValue(), user.AccessToken.GetAge(), "/", "", true, false)
-	c.SetCookie("refresh-token", user.RefrestToken.GetValue(), user.RefrestToken.GetAge(), "/", "", true, false)
+	c.SetCookie(user_id_cookie_key, fmt.Sprintf("%d", user.Id), 0, "/", "", true, false)
+	c.SetCookie(access_token_cookie_key, user.AccessToken.GetValue(), user.AccessToken.GetAge(), "/", "", true, false)
+	c.SetCookie(refresh_token_key, user.RefrestToken.GetValue(), user.RefrestToken.GetAge(), "/", "", true, false)
 
 	if user.ProfileId == 0 {
-		c.Redirect(http.StatusFound, "/profile/create")
+		c.Redirect(http.StatusFound, endpoint.ApiProfileCreateUrl)
 		return
 	}
 	c.Status(http.StatusOK)
@@ -57,7 +64,7 @@ func (e *authEndpoint) Login(c *gin.Context) {
 
 func (e *authEndpoint) Register(c *gin.Context) {
 
-	var req dto.RestAuthRequest
+	var req dto.RestRegisterRequest
 	if err := c.BindJSON(&req); err != nil {
 		c.Status(http.StatusBadRequest)
 		return
@@ -65,17 +72,53 @@ func (e *authEndpoint) Register(c *gin.Context) {
 
 	log.Println("http register request:", req)
 
-	e.repo.Register(req)
+	err := e.repo.Register(&req)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": err,
+		})
+		return
+	}
 
 	c.Status(http.StatusOK)
 }
 
 func (e *authEndpoint) RefreshLogin(c *gin.Context) {
 
-	type refreshTokenRequest struct {
-		Id           uint64 `json:"id"`
-		RefreshToken string `json:"refresh-token"`
+	id, err := c.Cookie(user_id_cookie_key)
+	if err != nil {
+		c.Redirect(http.StatusFound, endpoint.ApiAuthLoginUrl)
+		return
 	}
 
-	var _ refreshTokenRequest
+	token, err := c.Cookie(refresh_token_key)
+	if err != nil {
+		c.Redirect(http.StatusFound, endpoint.ApiAuthLoginUrl)
+		return
+	}
+
+	user_id, err := strconv.ParseUint(id, 10, 64)
+	if err != nil {
+		c.Status(http.StatusInternalServerError)
+		return
+	}
+
+	req := dto.RestRefreshTokenRequest{
+		Id:           user_id,
+		RefreshToken: token,
+	}
+
+	log.Println("http refresh token request:", req)
+
+	user, err := e.repo.Refresh(&req)
+	if err != nil {
+		c.Redirect(http.StatusFound, endpoint.ApiAuthLoginUrl)
+		return
+	}
+
+	c.SetCookie(user_id_cookie_key, fmt.Sprintf("%d", user.Id), 0, "/", "", true, false)
+	c.SetCookie(access_token_cookie_key, user.AccessToken.GetValue(), user.AccessToken.GetAge(), "/", "", true, false)
+	c.SetCookie(refresh_token_key, user.RefrestToken.GetValue(), user.RefrestToken.GetAge(), "/", "", true, false)
+
+	c.Status(http.StatusOK)
 }

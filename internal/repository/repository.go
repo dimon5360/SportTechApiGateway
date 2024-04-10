@@ -2,13 +2,15 @@ package repository
 
 import "app/main/internal/dto"
 
-const InvalidInputParameter string = "invalid input parameter"
+const (
+	InvalidInputParameter string = "invalid input parameter"
+)
 
 type AuthInterface interface {
 	Init() error
-	Login(req *dto.RestAuthRequest) (*dto.RestLoginResponse, error)
-	Register(interface{}) (interface{}, error)
-	Refresh(interface{}) (interface{}, error)
+	Login(req *dto.RestLoginRequest) (*dto.RestLoginResponse, error)
+	Register(req *dto.RestRegisterRequest) error
+	Refresh(req *dto.RestRefreshTokenRequest) (*dto.RestRefreshTokenResponse, error)
 }
 
 type ProfileInterface interface {

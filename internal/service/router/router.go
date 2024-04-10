@@ -81,21 +81,21 @@ func (s *router) initStatic() {
 
 func (s *router) initEndpoints() {
 
-	s.engine.GET("/", endpoint.Index)
-	s.engine.GET("/ping", endpoint.Ping)
+	s.engine.GET(endpoint.ApiHomeUrl, endpoint.Index)
+	s.engine.GET(endpoint.ApiPIngUrl, endpoint.Ping)
 
-	api := s.engine.Group("/api/v1")
+	api := s.engine.Group(endpoint.ApiGroupV1)
 	{
-		api.POST("/auth/login", s.authEndpoint.Login)
-		api.POST("/auth/register", s.authEndpoint.Register)
+		api.POST(endpoint.ApiAuthLoginUrl, s.authEndpoint.Login)
+		api.POST(endpoint.ApiAuthRegisternUrl, s.authEndpoint.Register)
 
-		api.PUT("/auth/token-refresh", s.authEndpoint.RefreshLogin)
+		api.PUT(endpoint.ApiRefreshTokenUtl, s.authEndpoint.RefreshLogin)
 
-		api.GET("/profile", s.profileEndpoint.Get)
-		api.POST("/profile", s.profileEndpoint.Post)
+		api.GET(endpoint.ApiProfileGetUrl, s.profileEndpoint.Get)
+		api.POST(endpoint.ApiProfileCreateUrl, s.profileEndpoint.Post)
 
-		api.GET("/report", s.reportEndpoint.Get)
-		api.POST("/report", s.reportEndpoint.Post)
+		api.GET(endpoint.ApiReportCreateUrl, s.reportEndpoint.Get)
+		api.POST(endpoint.ApiReportGetUrl, s.reportEndpoint.Post)
 	}
 
 	s.engine.NoRoute(func(c *gin.Context) {

@@ -4,7 +4,6 @@ import (
 	"app/main/internal/dto"
 	"app/main/internal/repository"
 	"context"
-	"fmt"
 	"log"
 	"os"
 	"time"
@@ -46,37 +45,40 @@ func (r *authRepository) Init() error {
 	return nil
 }
 
-func (r *authRepository) Login(req *dto.RestAuthRequest) (*dto.RestLoginResponse, error) {
+func (r *authRepository) Login(req *dto.RestLoginRequest) (*dto.RestLoginResponse, error) {
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
 
-	grpcResponse, err := r.grpc.LoginUser(ctx, dto.ConvertRest2GrpcLoginRequest(req))
+	response, err := r.grpc.LoginUser(ctx, dto.ConvertRest2GrpcLoginRequest(req))
 	if err != nil {
 		return nil, err
 	}
 
-	return dto.ConvertGrpc2RestLoginResponse(grpcResponse), nil
+	return dto.ConvertGrpc2RestLoginResponse(response), nil
 }
 
-func (r *authRepository) Register(req interface{}) (interface{}, error) {
+func (r *authRepository) Register(req *dto.RestRegisterRequest) error {
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
 
-	if val, ok := req.(*proto.RegisterUserRequest); ok {
-		return r.grpc.RegisterUser(ctx, val)
+	grpcResponse, err := r.grpc.RegisterUser(ctx, dto.ConvertRest2GrpcRegisterRequest(req))
+	if err != nil {
+		return err
 	}
-	return nil, fmt.Errorf(repository.InvalidInputParameter)
+
+	return dto.ConvertGrpc2RestRegisterResponse(grpcResponse)
 }
 
-func (r *authRepository) Refresh(req interface{}) (interface{}, error) {
+func (r *authRepository) Refresh(req *dto.RestRefreshTokenRequest) (*dto.RestRefreshTokenResponse, error) {
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
 
-	if val, ok := req.(*proto.RefreshTokenRequest); ok {
-		return r.grpc.RefreshToken(ctx, val)
+	response, err := r.grpc.RefreshToken(ctx, dto.ConvertRest2GrpcRefreshRequest(req))
+	if err != nil {
+		return nil, err
 	}
-	return nil, fmt.Errorf(repository.InvalidInputParameter)
+	return dto.ConvertGrpc2RestRefreshnResponse(response), nil
 }

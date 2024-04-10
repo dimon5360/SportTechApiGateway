@@ -6,7 +6,7 @@ import (
 	proto "proto/go"
 )
 
-type RestAuthRequest struct {
+type RestLoginRequest struct {
 	Email    string `json:"email"`
 	Password string `json:"password"`
 }
@@ -35,7 +35,7 @@ func handlerAuthError(err proto.AuthError) error {
 	}
 }
 
-func ConvertRest2GrpcLoginRequest(req *RestAuthRequest) *proto.LoginUserRequest {
+func ConvertRest2GrpcLoginRequest(req *RestLoginRequest) *proto.LoginUserRequest {
 	log.Println("rest login request:", req)
 	return &proto.LoginUserRequest{
 		Email:    req.Email,
@@ -59,4 +59,22 @@ func ConvertGrpc2RestLoginResponse(resp *proto.LoginUserResponse) *RestLoginResp
 		IsValidated: resp.IsValidated,
 		Error:       handlerAuthError(resp.Error),
 	}
+}
+
+type RestRegisterRequest struct {
+	Email    string `json:"email"`
+	Password string `json:"password"`
+}
+
+func ConvertRest2GrpcRegisterRequest(req *RestRegisterRequest) *proto.RegisterUserRequest {
+	log.Println("rest register request:", req)
+	return &proto.RegisterUserRequest{
+		Email:    req.Email,
+		Password: req.Password,
+	}
+}
+
+func ConvertGrpc2RestRegisterResponse(resp *proto.RegisterUserResponse) error {
+	log.Println("protobuf register response:", resp)
+	return handlerAuthError(resp.Error)
 }
