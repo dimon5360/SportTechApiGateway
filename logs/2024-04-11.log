@@ -40,3 +40,45 @@
 2024/04/11 00:06:23 app.go:39: service running ...
 2024/04/11 00:06:23 router.go:62: listening host :40401 ...
 2024/04/11 00:06:23 logger.go:26: interrupt
+2024/04/11 22:29:11 logger.go:36: Logger initialized
+2024/04/11 22:29:11 service_provider.go:46: SportTech API gateway v.0.0.0.30
+2024/04/11 22:29:11 service_provider.go:47: provider initialised
+2024/04/11 22:29:11 router.go:50: gin initialized
+2024/04/11 22:29:11 service_provider.go:63: router created
+2024/04/11 22:29:11 app.go:39: service running ...
+2024/04/11 22:29:11 router.go:62: listening host :40401 ...
+2024/04/11 22:34:02 auth_endpoint.go:44: http login request: {admin@test.com admin1234}
+2024/04/11 22:34:02 authModel.go:39: rest login request: &{admin@test.com admin1234}
+2024/04/11 22:34:02 authModel.go:47: protobuf login response: id:1 access_token:{value:"test-access-token" age:10} refresh_token:{value:"test-refresh-token" age:10}
+2024/04/11 22:34:02 authModel.go:26: success error code
+2024/04/11 22:42:51 auth_endpoint.go:44: http login request: {admin@test.com admin1234}
+2024/04/11 22:42:51 authModel.go:39: rest login request: &{admin@test.com admin1234}
+2024/04/11 22:43:19 logger.go:26: interrupt
+2024/04/11 22:43:20 logger.go:36: Logger initialized
+2024/04/11 22:43:20 service_provider.go:46: SportTech API gateway v.0.0.0.30
+2024/04/11 22:43:20 service_provider.go:47: provider initialised
+2024/04/11 22:43:20 router.go:50: gin initialized
+2024/04/11 22:43:20 service_provider.go:63: router created
+2024/04/11 22:43:20 app.go:39: service running ...
+2024/04/11 22:43:20 router.go:62: listening host :40401 ...
+2024/04/11 22:43:29 auth_endpoint.go:44: http login request: {admin@test.com admin1234}
+2024/04/11 22:43:29 authModel.go:39: rest login request: &{admin@test.com admin1234}
+2024/04/11 22:45:36 auth_endpoint.go:44: http login request: {admin@test.com admin1234}
+2024/04/11 22:45:36 authModel.go:39: rest login request: &{admin@test.com admin1234}
+2024/04/11 22:45:36 authModel.go:47: protobuf login response: id:1 access_token:{value:"test-access-token" age:10} refresh_token:{value:"test-refresh-token" age:10} profile_id:1
+2024/04/11 22:45:36 authModel.go:26: success error code
+2024/04/11 23:34:15 auth_endpoint.go:44: http login request: {admin@test.com admin1234}
+2024/04/11 23:34:15 authModel.go:39: rest login request: &{admin@test.com admin1234}
+2024/04/11 23:35:19 auth_endpoint.go:44: http login request: {admin@test.com admin1234}
+2024/04/11 23:35:19 authModel.go:39: rest login request: &{admin@test.com admin1234}
+2024/04/12 00:16:10 auth_endpoint.go:44: http login request: {admin@test.com admin1234}
+2024/04/12 00:16:10 authModel.go:39: rest login request: &{admin@test.com admin1234}
+2024/04/12 00:18:20 auth_endpoint.go:44: http login request: {admin@test.com admin1234}
+2024/04/12 00:18:20 authModel.go:39: rest login request: &{admin@test.com admin1234}
+2024/04/12 00:19:37 auth_endpoint.go:44: http login request: {admin@test.com admin1234}
+2024/04/12 00:19:37 authModel.go:39: rest login request: &{admin@test.com admin1234}
+2024/04/12 00:38:49 auth_endpoint.go:44: http login request: {admin@test.com admin1234}
+2024/04/12 00:38:49 authModel.go:39: rest login request: &{admin@test.com admin1234}
+2024/04/12 00:40:41 auth_endpoint.go:44: http login request: {admin@test.com admin1234}
+2024/04/12 00:40:41 authModel.go:39: rest login request: &{admin@test.com admin1234}
+2024/04/12 00:42:37 logger.go:26: interrupt

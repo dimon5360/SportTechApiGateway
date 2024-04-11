@@ -46,7 +46,7 @@ func (e *authEndpoint) Login(c *gin.Context) {
 	user, err := e.repo.Login(&req)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
-			"error": err,
+			"error": err.Error(),
 		})
 		return
 	}
