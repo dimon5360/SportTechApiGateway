@@ -1,7 +1,7 @@
-package repository
+package reportRepository
 
 import (
-	"app/main/internal/repository"
+	"app/main/internal/dto/constants"
 	"context"
 	"fmt"
 	"os"
@@ -13,13 +13,21 @@ import (
 	proto "proto/go"
 )
 
+type Interface interface {
+	Init() error
+	Create(interface{}) (interface{}, error)
+	Read(interface{}) (interface{}, error)
+	Update(interface{}) (interface{}, error)
+	Delete(interface{}) error
+}
+
 type reportRepository struct {
 	grpc proto.ReportServiceClient
 }
 
 const reportRepositoryKey = "REPORT_SERVICE_HOST"
 
-func New() repository.ProfileInterface {
+func New() Interface {
 	return &reportRepository{}
 }
 
@@ -49,7 +57,7 @@ func (r *reportRepository) Create(req interface{}) (interface{}, error) {
 	if val, ok := req.(*proto.AddReportRequst); ok {
 		return r.grpc.AddReport(ctx, val)
 	}
-	return nil, fmt.Errorf(repository.InvalidInputParameter)
+	return nil, fmt.Errorf(constants.InvalidInputParameter)
 }
 
 func (r *reportRepository) Read(req interface{}) (interface{}, error) {
@@ -60,7 +68,7 @@ func (r *reportRepository) Read(req interface{}) (interface{}, error) {
 	if val, ok := req.(*proto.GetReportRequest); ok {
 		return r.grpc.GetReport(ctx, val)
 	}
-	return nil, fmt.Errorf(repository.InvalidInputParameter)
+	return nil, fmt.Errorf(constants.InvalidInputParameter)
 }
 
 func (r *reportRepository) Update(req interface{}) (interface{}, error) {

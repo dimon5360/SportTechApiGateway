@@ -2,14 +2,11 @@ package app
 
 import (
 	"app/main/internal/endpoint"
-	authEndpoint "app/main/internal/endpoint/auth"
-	profileEndpoint "app/main/internal/endpoint/profile"
-	reportEndpoint "app/main/internal/endpoint/report"
-	authRepository "app/main/internal/repository/auth"
-	profileRepository "app/main/internal/repository/profile"
-	reportRepository "app/main/internal/repository/report"
+	"app/main/internal/endpoint/authEndpoint"
+	"app/main/internal/endpoint/profileEndpoint"
+	"app/main/internal/endpoint/reportEndpoint"
+	"app/main/internal/repository"
 	"app/main/internal/service"
-	router "app/main/internal/service/router"
 	"app/main/pkg/env"
 	"app/main/pkg/logger"
 	"fmt"
@@ -50,7 +47,7 @@ func (p *provider) Init() (service.Interface, error) {
 
 func (p *provider) initUserService() (service.Interface, error) {
 
-	service := router.New(
+	service := service.New(
 		p.getAuthEndpoint(),
 		p.getProfileEndpoint(),
 		p.getReportEndpoint(),
@@ -64,24 +61,24 @@ func (p *provider) initUserService() (service.Interface, error) {
 	return service, nil
 }
 
-func (p *provider) getProfileEndpoint() endpoint.Profile {
-	endp, err := profileEndpoint.New(profileRepository.New())
+func (p *provider) getAuthEndpoint() authEndpoint.Interface {
+	endp, err := endpoint.NewAuthEndpoint(repository.NewAuthRepository())
 	if err != nil {
 		log.Fatal(err.Error())
 	}
 	return endp
 }
 
-func (p *provider) getReportEndpoint() endpoint.Report {
-	endp, err := reportEndpoint.New(reportRepository.New())
+func (p *provider) getProfileEndpoint() profileEndpoint.Interface {
+	endp, err := endpoint.NewProfileEndpoint(repository.NewProfileRepository())
 	if err != nil {
 		log.Fatal(err.Error())
 	}
 	return endp
 }
 
-func (p *provider) getAuthEndpoint() endpoint.Auth {
-	endp, err := authEndpoint.New(authRepository.New())
+func (p *provider) getReportEndpoint() reportEndpoint.Interface {
+	endp, err := endpoint.NewReportEndpoint(repository.NewReportRepository())
 	if err != nil {
 		log.Fatal(err.Error())
 	}

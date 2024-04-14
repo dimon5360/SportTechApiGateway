@@ -1,4 +1,4 @@
-package dto
+package models
 
 import (
 	"log"
@@ -24,7 +24,7 @@ type RestRefreshTokenRequest struct {
 }
 
 type RestRefreshTokenResponse struct {
-	Id           uint64
+	UserId       uint64
 	RefrestToken Token
 	AccessToken  Token
 	Error        error
@@ -41,7 +41,7 @@ func ConvertRest2GrpcRefreshRequest(req *RestRefreshTokenRequest) *proto.Refresh
 func ConvertGrpc2RestRefreshnResponse(resp *proto.RefreshTokenResponse) *RestRefreshTokenResponse {
 	log.Println("protobuf refresh token response:", resp)
 	return &RestRefreshTokenResponse{
-		Id: resp.Id,
+		UserId: resp.Id,
 		AccessToken: Token{
 			value: resp.AccessToken.GetValue(),
 			age:   int(resp.AccessToken.GetAge()),

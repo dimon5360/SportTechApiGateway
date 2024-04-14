@@ -1,8 +1,8 @@
-package endpoint
+package profileEndpoint
 
 import (
-	"app/main/internal/endpoint"
-	"app/main/internal/repository"
+	"app/main/internal/dto/constants"
+	"app/main/internal/repository/profileRepository"
 	"log"
 	"net/http"
 	"strconv"
@@ -12,27 +12,28 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type profileEndpoint struct {
-	repo repository.ProfileInterface
+type Interface interface {
+	Get(c *gin.Context)
+	Post(c *gin.Context)
 }
 
-func New(profileRepository repository.ProfileInterface) (endpoint.Profile, error) {
-	e := &profileEndpoint{
-		repo: profileRepository,
-	}
+type profileEndpointInstance struct {
+	repo profileRepository.Interface
+}
 
-	if err := e.repo.Init(); err != nil {
-		return nil, err
+func NewProfileEndpoint(profileRepository profileRepository.Interface) (Interface, error) {
+	e := &profileEndpointInstance{
+		repo: profileRepository,
 	}
 	return e, nil
 }
 
-func (e *profileEndpoint) Get(c *gin.Context) {
+func (e *profileEndpointInstance) Get(c *gin.Context) {
 
 	userId, err := c.Cookie("user_id")
 	if err != nil {
 		log.Println("cookie has no user id")
-		c.Status(http.StatusInternalServerError)
+		c.Redirect(http.StatusFound, constants.ApiAuthLoginUrl)
 		return
 	}
 
@@ -66,7 +67,7 @@ func (e *profileEndpoint) Get(c *gin.Context) {
 	log.Println("invalid repository response")
 }
 
-func (e *profileEndpoint) Post(c *gin.Context) {
+func (e *profileEndpointInstance) Post(c *gin.Context) {
 
 	type createProfileRequest struct {
 		Username  string `json:"username"`
@@ -78,7 +79,7 @@ func (e *profileEndpoint) Post(c *gin.Context) {
 	if err := c.Bind(&req); err != nil {
 		log.Println(err.Error())
 		c.JSON(http.StatusBadRequest, gin.H{
-			"error": endpoint.InvalidRequestArgs,
+			"error": constants.InvalidRequestArgs,
 		})
 		return
 	}

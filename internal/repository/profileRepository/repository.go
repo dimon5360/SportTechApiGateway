@@ -1,7 +1,7 @@
-package repository
+package profileRepository
 
 import (
-	"app/main/internal/repository"
+	"app/main/internal/dto/constants"
 	"context"
 	"fmt"
 	"log"
@@ -14,14 +14,21 @@ import (
 	proto "proto/go"
 )
 
+type Interface interface {
+	Init() error
+	Create(interface{}) (interface{}, error)
+	Read(interface{}) (interface{}, error)
+	Update(interface{}) (interface{}, error)
+	Delete(interface{}) error
+}
+
 type profileRepository struct {
 	grpc proto.UserServiceClient
 }
 
 const profileRepositoryKey = "USER_SERVICE_HOST"
 
-func New() repository.ProfileInterface {
-
+func New() Interface {
 	return &profileRepository{}
 }
 
@@ -51,7 +58,7 @@ func (r *profileRepository) Create(req interface{}) (interface{}, error) {
 	if val, ok := req.(*proto.CreateProfileRequest); ok {
 		return r.grpc.CreateProfile(ctx, val)
 	}
-	return nil, fmt.Errorf(repository.InvalidInputParameter)
+	return nil, fmt.Errorf(constants.InvalidInputParameter)
 }
 
 func (r *profileRepository) Read(req interface{}) (interface{}, error) {
@@ -62,7 +69,7 @@ func (r *profileRepository) Read(req interface{}) (interface{}, error) {
 	if val, ok := req.(*proto.GetProfileRequest); ok {
 		return r.grpc.GetProfile(ctx, val)
 	}
-	return nil, fmt.Errorf(repository.InvalidInputParameter)
+	return nil, fmt.Errorf(constants.InvalidInputParameter)
 }
 
 func (r *profileRepository) Update(req interface{}) (interface{}, error) {

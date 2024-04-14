@@ -1,8 +1,9 @@
-package endpoint
+package reportEndpoint
 
 import (
-	"app/main/internal/endpoint"
-	repository "app/main/internal/repository"
+	"app/main/internal/repository/reportRepository"
+
+	"app/main/internal/dto/constants"
 	"log"
 	"net/http"
 	"strconv"
@@ -12,22 +13,23 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type reportEndpoint struct {
-	repo repository.ReportInterface
+type Interface interface {
+	Get(c *gin.Context)
+	Post(c *gin.Context)
 }
 
-func New(reportRepository repository.ReportInterface) (endpoint.Report, error) {
-	e := &reportEndpoint{
-		repo: reportRepository,
-	}
+type reportEndpointInstance struct {
+	repo reportRepository.Interface
+}
 
-	if err := e.repo.Init(); err != nil {
-		return nil, err
+func NewReportEndpoint(reportRepository reportRepository.Interface) (Interface, error) {
+	e := &reportEndpointInstance{
+		repo: reportRepository,
 	}
 	return e, nil
 }
 
-func (e *reportEndpoint) Get(c *gin.Context) {
+func (e *reportEndpointInstance) Get(c *gin.Context) {
 
 	ID := c.Params.ByName("user_id")
 	userId, err := strconv.ParseUint(ID, 10, 64)
@@ -63,7 +65,7 @@ func (e *reportEndpoint) Get(c *gin.Context) {
 	log.Println("invalid repository response")
 }
 
-func (e *reportEndpoint) Post(c *gin.Context) {
+func (e *reportEndpointInstance) Post(c *gin.Context) {
 
 	type createUserRequest struct {
 		UserId   string `json:"user_id"`
@@ -74,7 +76,7 @@ func (e *reportEndpoint) Post(c *gin.Context) {
 	if err := c.Bind(&req); err != nil {
 		log.Println(err.Error())
 		c.JSON(http.StatusBadRequest, gin.H{
-			"error": endpoint.InvalidRequestArgs,
+			"error": constants.InvalidRequestArgs,
 		})
 		return
 	}

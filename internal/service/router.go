@@ -1,8 +1,11 @@
 package service
 
 import (
+	"app/main/internal/dto/constants"
 	"app/main/internal/endpoint"
-	"app/main/internal/service"
+	"app/main/internal/endpoint/authEndpoint"
+	"app/main/internal/endpoint/profileEndpoint"
+	"app/main/internal/endpoint/reportEndpoint"
 	"log"
 	"net/http"
 	"os"
@@ -19,16 +22,16 @@ const (
 type router struct {
 	engine *gin.Engine
 
-	authEndpoint    endpoint.Auth
-	profileEndpoint endpoint.Profile
-	reportEndpoint  endpoint.Report
+	authEndpoint    authEndpoint.Interface
+	profileEndpoint profileEndpoint.Interface
+	reportEndpoint  reportEndpoint.Interface
 }
 
 func New(
-	authEndpoint endpoint.Auth,
-	profileEndpoint endpoint.Profile,
-	reportEndpoint endpoint.Report,
-) service.Interface {
+	authEndpoint authEndpoint.Interface,
+	profileEndpoint profileEndpoint.Interface,
+	reportEndpoint reportEndpoint.Interface,
+) Interface {
 
 	return &router{
 		authEndpoint:    authEndpoint,
@@ -81,21 +84,26 @@ func (s *router) initStatic() {
 
 func (s *router) initEndpoints() {
 
-	s.engine.GET(endpoint.ApiHomeUrl, endpoint.Index)
-	s.engine.GET(endpoint.ApiPIngUrl, endpoint.Ping)
+	s.engine.GET(constants.ApiHomeUrl, endpoint.Index)
+	s.engine.GET(constants.ApiPingUrl, endpoint.Ping)
 
-	api := s.engine.Group(endpoint.ApiGroupV1)
+	// token isn't required
+	public := s.engine.Group(constants.ApiGroupV1)
 	{
-		api.POST(endpoint.ApiAuthLoginUrl, s.authEndpoint.Login)
-		api.POST(endpoint.ApiAuthRegisternUrl, s.authEndpoint.Register)
+		public.POST(constants.ApiAuthLoginUrl, s.authEndpoint.Login)
+		public.POST(constants.ApiAuthRegisternUrl, s.authEndpoint.Register)
+	}
 
-		api.PUT(endpoint.ApiRefreshTokenUtl, s.authEndpoint.RefreshLogin)
+	// token required
+	private := s.engine.Group(constants.ApiGroupV1)
+	{
+		private.PUT(constants.ApiRefreshTokenUrl, s.authEndpoint.RefreshToken)
 
-		api.GET(endpoint.ApiProfileGetUrl, s.profileEndpoint.Get)
-		api.POST(endpoint.ApiProfileCreateUrl, s.profileEndpoint.Post)
+		private.GET(constants.ApiProfileGetUrl, s.profileEndpoint.Get)
+		private.POST(constants.ApiProfileCreateUrl, s.profileEndpoint.Post)
 
-		api.GET(endpoint.ApiReportCreateUrl, s.reportEndpoint.Get)
-		api.POST(endpoint.ApiReportGetUrl, s.reportEndpoint.Post)
+		private.GET(constants.ApiReportCreateUrl, s.reportEndpoint.Get)
+		private.POST(constants.ApiReportGetUrl, s.reportEndpoint.Post)
 	}
 
 	s.engine.NoRoute(func(c *gin.Context) {

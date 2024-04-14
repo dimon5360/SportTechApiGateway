@@ -1,0 +1,191 @@
+2024/04/14 14:49:54 logger.go:36: Logger initialized
+2024/04/14 14:49:54 service_provider.go:43: SportTech API gateway v.0.0.0.31
+2024/04/14 14:49:54 service_provider.go:44: provider initialised
+2024/04/14 14:50:23 logger.go:36: Logger initialized
+2024/04/14 14:50:23 service_provider.go:43: SportTech API gateway v.0.0.0.31
+2024/04/14 14:50:23 service_provider.go:44: provider initialised
+2024/04/14 14:50:47 logger.go:36: Logger initialized
+2024/04/14 14:50:47 service_provider.go:43: SportTech API gateway v.0.0.0.31
+2024/04/14 14:50:47 service_provider.go:44: provider initialised
+2024/04/14 14:50:47 router.go:53: gin initialized
+2024/04/14 14:50:47 service_provider.go:61: router created
+2024/04/14 14:50:47 app.go:39: service running ...
+2024/04/14 14:50:47 router.go:65: listening host :40401 ...
+2024/04/14 14:51:08 endpoint.go:32: method isn't emplemented
+2024/04/14 14:51:08 endpoint.go:26: method isn't emplemented
+2024/04/14 15:19:04 logger.go:26: interrupt
+2024/04/14 15:48:33 logger.go:36: Logger initialized
+2024/04/14 15:48:33 service_provider.go:42: SportTech API gateway v.0.0.0.31
+2024/04/14 15:48:33 service_provider.go:43: provider initialised
+2024/04/14 15:48:33 router.go:49: gin initialized
+2024/04/14 15:48:33 service_provider.go:59: router created
+2024/04/14 15:48:33 app.go:39: service running ...
+2024/04/14 15:48:33 router.go:61: listening host :40401 ...
+2024/04/14 15:48:34 logger.go:26: interrupt
+2024/04/14 16:07:43 logger.go:36: Logger initialized
+2024/04/14 16:07:43 service_provider.go:42: SportTech API gateway v.0.0.0.31
+2024/04/14 16:07:43 service_provider.go:43: provider initialised
+2024/04/14 16:07:43 router.go:49: gin initialized
+2024/04/14 16:07:43 service_provider.go:59: router created
+2024/04/14 16:07:43 app.go:39: service running ...
+2024/04/14 16:07:43 router.go:61: listening host :40401 ...
+2024/04/14 16:07:45 logger.go:26: interrupt
+2024/04/14 16:55:02 logger.go:36: Logger initialized
+2024/04/14 16:55:02 service_provider.go:40: SportTech API gateway v.0.0.0.31
+2024/04/14 16:55:02 service_provider.go:41: provider initialised
+2024/04/14 16:55:02 router.go:49: gin initialized
+2024/04/14 16:55:02 service_provider.go:57: router created
+2024/04/14 16:55:02 app.go:39: service running ...
+2024/04/14 16:55:02 router.go:61: listening host :40401 ...
+2024/04/14 16:55:03 logger.go:26: interrupt
+2024/04/14 17:03:04 logger.go:36: Logger initialized
+2024/04/14 17:03:04 service_provider.go:43: SportTech API gateway v.0.0.0.31
+2024/04/14 17:03:04 service_provider.go:44: provider initialised
+2024/04/14 17:03:04 router.go:52: gin initialized
+2024/04/14 17:03:04 service_provider.go:60: router created
+2024/04/14 17:03:04 app.go:39: service running ...
+2024/04/14 17:03:04 router.go:64: listening host :40401 ...
+2024/04/14 17:03:06 logger.go:26: interrupt
+2024/04/14 17:10:31 logger.go:36: Logger initialized
+2024/04/14 17:10:31 service_provider.go:43: SportTech API gateway v.0.0.0.32
+2024/04/14 17:10:31 service_provider.go:44: provider initialised
+2024/04/14 17:10:31 router.go:52: gin initialized
+2024/04/14 17:10:31 service_provider.go:60: router created
+2024/04/14 17:10:31 app.go:39: service running ...
+2024/04/14 17:10:31 router.go:64: listening host :40401 ...
+2024/04/14 17:10:32 logger.go:26: interrupt
+2024/04/14 17:27:17 logger.go:36: Logger initialized
+2024/04/14 17:27:17 service_provider.go:43: SportTech API gateway v.0.0.0.32
+2024/04/14 17:27:17 service_provider.go:44: provider initialised
+2024/04/14 17:27:17 router.go:53: gin initialized
+2024/04/14 17:27:17 service_provider.go:60: router created
+2024/04/14 17:27:17 app.go:39: service running ...
+2024/04/14 17:27:17 router.go:65: listening host :40401 ...
+2024/04/14 17:27:21 logger.go:26: interrupt
+2024/04/14 23:10:57 logger.go:36: Logger initialized
+2024/04/14 23:10:57 service_provider.go:43: SportTech API gateway v.0.0.0.32
+2024/04/14 23:10:57 service_provider.go:44: provider initialised
+2024/04/14 23:10:57 router.go:53: gin initialized
+2024/04/14 23:10:57 service_provider.go:60: router created
+2024/04/14 23:10:57 app.go:39: service running ...
+2024/04/14 23:10:57 router.go:65: listening host :40401 ...
+2024/04/14 23:12:22 profileEndpoint.go:35: cookie has no user id
+2024/04/14 23:13:32 logger.go:26: interrupt
+2024/04/14 23:13:34 logger.go:36: Logger initialized
+2024/04/14 23:13:34 service_provider.go:43: SportTech API gateway v.0.0.0.32
+2024/04/14 23:13:34 service_provider.go:44: provider initialised
+2024/04/14 23:13:34 router.go:53: gin initialized
+2024/04/14 23:13:34 service_provider.go:60: router created
+2024/04/14 23:13:34 app.go:39: service running ...
+2024/04/14 23:13:34 router.go:65: listening host :40401 ...
+2024/04/14 23:13:36 profileEndpoint.go:35: cookie has no user id
+2024/04/14 23:14:13 logger.go:26: interrupt
+2024/04/14 23:14:15 logger.go:36: Logger initialized
+2024/04/14 23:14:15 service_provider.go:43: SportTech API gateway v.0.0.0.32
+2024/04/14 23:14:15 service_provider.go:44: provider initialised
+2024/04/14 23:14:15 router.go:53: gin initialized
+2024/04/14 23:14:15 service_provider.go:60: router created
+2024/04/14 23:14:15 app.go:39: service running ...
+2024/04/14 23:14:15 router.go:65: listening host :40401 ...
+2024/04/14 23:14:17 profileEndpoint.go:35: cookie has no user id
+2024/04/14 23:14:56 logger.go:26: interrupt
+2024/04/14 23:28:56 logger.go:36: Logger initialized
+2024/04/14 23:28:56 service_provider.go:43: SportTech API gateway v.0.0.0.32
+2024/04/14 23:28:56 service_provider.go:44: provider initialised
+2024/04/14 23:28:56 router.go:53: gin initialized
+2024/04/14 23:28:56 service_provider.go:60: router created
+2024/04/14 23:28:56 app.go:39: service running ...
+2024/04/14 23:28:56 router.go:65: listening host :40401 ...
+2024/04/14 23:29:23 endpoint.go:69: http register request: {admin1234@test.com admin1234}
+2024/04/14 23:29:23 authModel.go:70: rest register request: &{admin1234@test.com admin1234}
+2024/04/14 23:32:00 logger.go:26: interrupt
+2024/04/14 23:32:01 logger.go:36: Logger initialized
+2024/04/14 23:32:01 service_provider.go:43: SportTech API gateway v.0.0.0.32
+2024/04/14 23:32:01 service_provider.go:44: provider initialised
+2024/04/14 23:32:01 router.go:53: gin initialized
+2024/04/14 23:32:01 service_provider.go:60: router created
+2024/04/14 23:32:01 app.go:39: service running ...
+2024/04/14 23:32:01 router.go:65: listening host :40401 ...
+2024/04/14 23:32:03 endpoint.go:69: http register request: {admin1234@test.com admin1234}
+2024/04/14 23:32:03 authModel.go:70: rest register request: &{admin1234@test.com admin1234}
+2024/04/14 23:33:06 endpoint.go:69: http register request: {admin1234@test.com admin1234}
+2024/04/14 23:33:06 authModel.go:70: rest register request: &{admin1234@test.com admin1234}
+2024/04/14 23:34:36 endpoint.go:69: http register request: {admin1234@test.com admin1234}
+2024/04/14 23:34:36 authModel.go:70: rest register request: &{admin1234@test.com admin1234}
+2024/04/14 23:35:02 endpoint.go:40: http login request: {admin1234@test.com admin1234}
+2024/04/14 23:35:02 authModel.go:39: rest login request: &{admin1234@test.com admin1234}
+2024/04/14 23:36:17 endpoint.go:40: http login request: {admin1234@test.com admin1234}
+2024/04/14 23:36:17 authModel.go:39: rest login request: &{admin1234@test.com admin1234}
+2024/04/14 23:36:23 endpoint.go:69: http register request: {admin1234@test.com admin1234}
+2024/04/14 23:36:23 authModel.go:70: rest register request: &{admin1234@test.com admin1234}
+2024/04/14 23:37:39 endpoint.go:69: http register request: {admin1234@test.com admin1234}
+2024/04/14 23:37:39 authModel.go:70: rest register request: &{admin1234@test.com admin1234}
+2024/04/14 23:38:45 endpoint.go:69: http register request: {admin1234@test.com admin1234}
+2024/04/14 23:38:45 authModel.go:70: rest register request: &{admin1234@test.com admin1234}
+2024/04/14 23:39:15 endpoint.go:69: http register request: {admin1234@test.com admin1234}
+2024/04/14 23:39:15 authModel.go:70: rest register request: &{admin1234@test.com admin1234}
+2024/04/14 23:39:34 logger.go:26: interrupt
+2024/04/14 23:39:36 logger.go:36: Logger initialized
+2024/04/14 23:39:36 service_provider.go:43: SportTech API gateway v.0.0.0.32
+2024/04/14 23:39:36 service_provider.go:44: provider initialised
+2024/04/14 23:39:36 router.go:53: gin initialized
+2024/04/14 23:39:36 service_provider.go:60: router created
+2024/04/14 23:39:36 app.go:39: service running ...
+2024/04/14 23:39:36 router.go:65: listening host :40401 ...
+2024/04/14 23:39:37 endpoint.go:69: http register request: {admin1234@test.com admin1234}
+2024/04/14 23:39:37 authModel.go:70: rest register request: &{admin1234@test.com admin1234}
+2024/04/14 23:39:38 authModel.go:78: protobuf register response: 
+2024/04/14 23:39:38 authModel.go:26: success error code
+2024/04/14 23:39:56 endpoint.go:69: http register request: {admin1234@test.com admin1234}
+2024/04/14 23:39:56 authModel.go:70: rest register request: &{admin1234@test.com admin1234}
+2024/04/14 23:40:17 endpoint.go:40: http login request: {admin1234@test.com admin1234}
+2024/04/14 23:40:17 authModel.go:39: rest login request: &{admin1234@test.com admin1234}
+2024/04/14 23:40:22 endpoint.go:40: http login request: {admin1234@test.com admin1234}
+2024/04/14 23:40:22 authModel.go:39: rest login request: &{admin1234@test.com admin1234}
+2024/04/14 23:40:23 endpoint.go:40: http login request: {admin1234@test.com admin1234}
+2024/04/14 23:40:23 authModel.go:39: rest login request: &{admin1234@test.com admin1234}
+2024/04/14 23:40:24 endpoint.go:40: http login request: {admin1234@test.com admin1234}
+2024/04/14 23:40:24 authModel.go:39: rest login request: &{admin1234@test.com admin1234}
+2024/04/14 23:40:25 endpoint.go:40: http login request: {admin1234@test.com admin1234}
+2024/04/14 23:40:25 authModel.go:39: rest login request: &{admin1234@test.com admin1234}
+2024/04/14 23:40:26 endpoint.go:40: http login request: {admin1234@test.com admin1234}
+2024/04/14 23:40:26 authModel.go:39: rest login request: &{admin1234@test.com admin1234}
+2024/04/14 23:40:35 endpoint.go:69: http register request: {admin1234@test.com admin1234}
+2024/04/14 23:40:35 authModel.go:70: rest register request: &{admin1234@test.com admin1234}
+2024/04/14 23:41:18 endpoint.go:69: http register request: {admin1234@test.com admin1234}
+2024/04/14 23:41:18 authModel.go:70: rest register request: &{admin1234@test.com admin1234}
+2024/04/14 23:43:18 endpoint.go:69: http register request: {admin1234@test.com admin1234}
+2024/04/14 23:43:18 authModel.go:70: rest register request: &{admin1234@test.com admin1234}
+2024/04/14 23:43:21 endpoint.go:69: http register request: {admin1234@test.com admin1234}
+2024/04/14 23:43:21 authModel.go:70: rest register request: &{admin1234@test.com admin1234}
+2024/04/14 23:43:21 endpoint.go:69: http register request: {admin1234@test.com admin1234}
+2024/04/14 23:43:21 authModel.go:70: rest register request: &{admin1234@test.com admin1234}
+2024/04/14 23:43:22 endpoint.go:69: http register request: {admin1234@test.com admin1234}
+2024/04/14 23:43:22 authModel.go:70: rest register request: &{admin1234@test.com admin1234}
+2024/04/14 23:43:23 endpoint.go:69: http register request: {admin1234@test.com admin1234}
+2024/04/14 23:43:23 authModel.go:70: rest register request: &{admin1234@test.com admin1234}
+2024/04/14 23:43:23 endpoint.go:69: http register request: {admin1234@test.com admin1234}
+2024/04/14 23:43:23 authModel.go:70: rest register request: &{admin1234@test.com admin1234}
+2024/04/14 23:43:24 endpoint.go:69: http register request: {admin1234@test.com admin1234}
+2024/04/14 23:43:24 authModel.go:70: rest register request: &{admin1234@test.com admin1234}
+2024/04/14 23:43:25 endpoint.go:69: http register request: {admin1234@test.com admin1234}
+2024/04/14 23:43:25 authModel.go:70: rest register request: &{admin1234@test.com admin1234}
+2024/04/14 23:43:25 endpoint.go:69: http register request: {admin1234@test.com admin1234}
+2024/04/14 23:43:25 authModel.go:70: rest register request: &{admin1234@test.com admin1234}
+2024/04/14 23:43:42 endpoint.go:69: http register request: {admin1234@test.com admin1234}
+2024/04/14 23:43:42 authModel.go:70: rest register request: &{admin1234@test.com admin1234}
+2024/04/14 23:45:23 endpoint.go:69: http register request: {admin1234@test.com admin1234}
+2024/04/14 23:45:23 authModel.go:70: rest register request: &{admin1234@test.com admin1234}
+2024/04/14 23:45:26 endpoint.go:69: http register request: {admin1234@test.com admin1234}
+2024/04/14 23:45:26 authModel.go:70: rest register request: &{admin1234@test.com admin1234}
+2024/04/14 23:45:51 logger.go:26: interrupt
+2024/04/14 23:45:53 logger.go:36: Logger initialized
+2024/04/14 23:45:53 service_provider.go:43: SportTech API gateway v.0.0.0.32
+2024/04/14 23:45:53 service_provider.go:44: provider initialised
+2024/04/14 23:45:53 router.go:53: gin initialized
+2024/04/14 23:45:53 service_provider.go:60: router created
+2024/04/14 23:45:53 app.go:39: service running ...
+2024/04/14 23:45:53 router.go:65: listening host :40401 ...
+2024/04/14 23:45:57 endpoint.go:69: http register request: {admin1234@test.com admin1234}
+2024/04/14 23:45:57 authModel.go:70: rest register request: &{admin1234@test.com admin1234}
+2024/04/14 23:46:15 logger.go:26: interrupt
