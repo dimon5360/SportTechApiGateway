@@ -1,8 +1,10 @@
-package authRepository
+package userRepository
 
 import (
+	"app/main/internal/dto/constants"
 	"app/main/internal/dto/models"
 	"context"
+	"fmt"
 	"log"
 	"os"
 	"time"
@@ -18,6 +20,11 @@ type Interface interface {
 	Register(*models.RestRegisterRequest) error
 	Login(*models.RestLoginRequest) (*models.RestLoginResponse, error)
 	RefreshToken(*models.RestRefreshTokenRequest) (*models.RestRefreshTokenResponse, error)
+
+	CreateProfile(interface{}) (interface{}, error)
+	GetProfile(interface{}) (interface{}, error)
+	UpdateProfile(interface{}) (interface{}, error)
+	DeleteProfile(interface{}) error
 }
 
 type authRepository struct {
@@ -89,5 +96,35 @@ func (r *authRepository) RefreshToken(req *models.RestRefreshTokenRequest) (*mod
 }
 
 func (r *authRepository) Delete(req interface{}) error {
+	return nil
+}
+
+func (r *authRepository) CreateProfile(req interface{}) (interface{}, error) {
+
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
+
+	if val, ok := req.(*proto.CreateProfileRequest); ok {
+		return r.grpc.CreateProfile(ctx, val)
+	}
+	return nil, fmt.Errorf(constants.InvalidInputParameter)
+}
+
+func (r *authRepository) GetProfile(req interface{}) (interface{}, error) {
+
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
+
+	if val, ok := req.(*proto.GetProfileRequest); ok {
+		return r.grpc.GetProfile(ctx, val)
+	}
+	return nil, fmt.Errorf(constants.InvalidInputParameter)
+}
+
+func (r *authRepository) UpdateProfile(req interface{}) (interface{}, error) {
+	return true, nil
+}
+
+func (r *authRepository) DeleteProfile(req interface{}) error {
 	return nil
 }

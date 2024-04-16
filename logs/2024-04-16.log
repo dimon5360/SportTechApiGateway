@@ -1,0 +1,16 @@
+2024/04/16 23:47:51 logger.go:36: Logger initialized
+2024/04/16 23:47:51 service_provider.go:42: SportTech API gateway v.0.0.0.32
+2024/04/16 23:47:51 service_provider.go:43: provider initialised
+2024/04/16 23:47:51 router.go:49: gin initialized
+2024/04/16 23:47:51 service_provider.go:58: router created
+2024/04/16 23:47:51 app.go:39: service running ...
+2024/04/16 23:47:51 router.go:61: listening host :40401 ...
+2024/04/16 23:47:53 logger.go:26: interrupt
+2024/04/16 23:49:03 logger.go:36: Logger initialized
+2024/04/16 23:49:03 service_provider.go:42: SportTech API gateway v.0.0.0.32
+2024/04/16 23:49:03 service_provider.go:43: provider initialised
+2024/04/16 23:49:03 router.go:49: gin initialized
+2024/04/16 23:49:03 service_provider.go:58: router created
+2024/04/16 23:49:03 app.go:39: service running ...
+2024/04/16 23:49:03 router.go:61: listening host :40401 ...
+2024/04/16 23:49:06 logger.go:26: interrupt

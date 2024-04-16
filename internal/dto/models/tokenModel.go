@@ -1,6 +1,7 @@
 package models
 
 import (
+	"fmt"
 	"log"
 	proto "proto/go"
 )
@@ -50,6 +51,6 @@ func ConvertGrpc2RestRefreshnResponse(resp *proto.RefreshTokenResponse) *RestRef
 			value: resp.RefreshToken.GetValue(),
 			age:   int(resp.RefreshToken.GetAge()),
 		},
-		Error: handlerAuthError(resp.Error),
+		Error: fmt.Errorf(resp.Error),
 	}
 }

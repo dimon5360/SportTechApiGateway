@@ -1,17 +1,12 @@
 package repository
 
 import (
-	"app/main/internal/repository/authRepository"
-	"app/main/internal/repository/profileRepository"
 	"app/main/internal/repository/reportRepository"
+	"app/main/internal/repository/userRepository"
 )
 
-func NewAuthRepository() authRepository.Interface {
-	return authRepository.New()
-}
-
-func NewProfileRepository() profileRepository.Interface {
-	return profileRepository.New()
+func NewUserRepository() userRepository.Interface {
+	return userRepository.New()
 }
 
 func NewReportRepository() reportRepository.Interface {

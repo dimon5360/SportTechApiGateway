@@ -1,31 +1,22 @@
 package endpoint
 
 import (
-	"app/main/internal/endpoint/authEndpoint"
-	"app/main/internal/endpoint/profileEndpoint"
 	"app/main/internal/endpoint/reportEndpoint"
+	"app/main/internal/endpoint/userEndpoint"
 
-	"app/main/internal/repository/authRepository"
-	"app/main/internal/repository/profileRepository"
 	"app/main/internal/repository/reportRepository"
+	"app/main/internal/repository/userRepository"
 
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
 
-func NewAuthEndpoint(repo authRepository.Interface) (authEndpoint.Interface, error) {
+func NewAuthEndpoint(repo userRepository.Interface) (userEndpoint.Interface, error) {
 	if err := repo.Init(); err != nil {
 		return nil, err
 	}
-	return authEndpoint.NewAuthEndpoint(repo)
-}
-
-func NewProfileEndpoint(repo profileRepository.Interface) (profileEndpoint.Interface, error) {
-	if err := repo.Init(); err != nil {
-		return nil, err
-	}
-	return profileEndpoint.NewProfileEndpoint(repo)
+	return userEndpoint.NewUserEndpoint(repo)
 }
 
 func NewReportEndpoint(repo reportRepository.Interface) (reportEndpoint.Interface, error) {

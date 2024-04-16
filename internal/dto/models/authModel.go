@@ -20,21 +20,6 @@ type RestLoginResponse struct {
 	Error        error
 }
 
-func handlerAuthError(err proto.AuthError) error {
-	switch err {
-	case proto.AuthError_OK:
-		log.Println("success error code")
-		return nil
-	case proto.AuthError_NOT_FOUND:
-		return fmt.Errorf("user not found")
-	case proto.AuthError_ALREADY_EXIST:
-		return fmt.Errorf("user already exists")
-	default:
-		log.Println("unhandled error code")
-		return nil
-	}
-}
-
 func ConvertRest2GrpcLoginRequest(req *RestLoginRequest) *proto.LoginUserRequest {
 	log.Println("rest login request:", req)
 	return &proto.LoginUserRequest{
@@ -57,7 +42,7 @@ func ConvertGrpc2RestLoginResponse(resp *proto.LoginUserResponse) *RestLoginResp
 		},
 		ProfileId:   resp.ProfileId,
 		IsValidated: resp.IsValidated,
-		Error:       handlerAuthError(resp.Error),
+		Error:       fmt.Errorf(resp.Error),
 	}
 }
 
@@ -76,5 +61,5 @@ func ConvertRest2GrpcRegisterRequest(req *RestRegisterRequest) *proto.RegisterUs
 
 func ConvertGrpc2RestRegisterResponse(resp *proto.RegisterUserResponse) error {
 	log.Println("protobuf register response:", resp)
-	return handlerAuthError(resp.Error)
+	return fmt.Errorf(resp.Error)
 }

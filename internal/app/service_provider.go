@@ -2,9 +2,8 @@ package app
 
 import (
 	"app/main/internal/endpoint"
-	"app/main/internal/endpoint/authEndpoint"
-	"app/main/internal/endpoint/profileEndpoint"
 	"app/main/internal/endpoint/reportEndpoint"
+	"app/main/internal/endpoint/userEndpoint"
 	"app/main/internal/repository"
 	"app/main/internal/service"
 	"app/main/pkg/env"
@@ -49,7 +48,6 @@ func (p *provider) initUserService() (service.Interface, error) {
 
 	service := service.New(
 		p.getAuthEndpoint(),
-		p.getProfileEndpoint(),
 		p.getReportEndpoint(),
 	)
 
@@ -61,16 +59,8 @@ func (p *provider) initUserService() (service.Interface, error) {
 	return service, nil
 }
 
-func (p *provider) getAuthEndpoint() authEndpoint.Interface {
-	endp, err := endpoint.NewAuthEndpoint(repository.NewAuthRepository())
-	if err != nil {
-		log.Fatal(err.Error())
-	}
-	return endp
-}
-
-func (p *provider) getProfileEndpoint() profileEndpoint.Interface {
-	endp, err := endpoint.NewProfileEndpoint(repository.NewProfileRepository())
+func (p *provider) getAuthEndpoint() userEndpoint.Interface {
+	endp, err := endpoint.NewAuthEndpoint(repository.NewUserRepository())
 	if err != nil {
 		log.Fatal(err.Error())
 	}

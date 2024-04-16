@@ -3,9 +3,8 @@ package service
 import (
 	"app/main/internal/dto/constants"
 	"app/main/internal/endpoint"
-	"app/main/internal/endpoint/authEndpoint"
-	"app/main/internal/endpoint/profileEndpoint"
 	"app/main/internal/endpoint/reportEndpoint"
+	"app/main/internal/endpoint/userEndpoint"
 	"log"
 	"net/http"
 	"os"
@@ -22,21 +21,18 @@ const (
 type router struct {
 	engine *gin.Engine
 
-	authEndpoint    authEndpoint.Interface
-	profileEndpoint profileEndpoint.Interface
-	reportEndpoint  reportEndpoint.Interface
+	userEndpoint   userEndpoint.Interface
+	reportEndpoint reportEndpoint.Interface
 }
 
 func New(
-	authEndpoint authEndpoint.Interface,
-	profileEndpoint profileEndpoint.Interface,
+	userEndpoint userEndpoint.Interface,
 	reportEndpoint reportEndpoint.Interface,
 ) Interface {
 
 	return &router{
-		authEndpoint:    authEndpoint,
-		profileEndpoint: profileEndpoint,
-		reportEndpoint:  reportEndpoint,
+		userEndpoint:   userEndpoint,
+		reportEndpoint: reportEndpoint,
 	}
 }
 
@@ -90,17 +86,17 @@ func (s *router) initEndpoints() {
 	// token isn't required
 	public := s.engine.Group(constants.ApiGroupV1)
 	{
-		public.POST(constants.ApiAuthLoginUrl, s.authEndpoint.Login)
-		public.POST(constants.ApiAuthRegisternUrl, s.authEndpoint.Register)
+		public.POST(constants.ApiAuthLoginUrl, s.userEndpoint.Login)
+		public.POST(constants.ApiAuthRegisternUrl, s.userEndpoint.Register)
 	}
 
 	// token required
 	private := s.engine.Group(constants.ApiGroupV1)
 	{
-		private.PUT(constants.ApiRefreshTokenUrl, s.authEndpoint.RefreshToken)
+		private.PUT(constants.ApiRefreshTokenUrl, s.userEndpoint.RefreshToken)
 
-		private.GET(constants.ApiProfileGetUrl, s.profileEndpoint.Get)
-		private.POST(constants.ApiProfileCreateUrl, s.profileEndpoint.Post)
+		private.GET(constants.ApiProfileGetUrl, s.userEndpoint.GetProfile)
+		private.POST(constants.ApiProfileCreateUrl, s.userEndpoint.PostProfile)
 
 		private.GET(constants.ApiReportCreateUrl, s.reportEndpoint.Get)
 		private.POST(constants.ApiReportGetUrl, s.reportEndpoint.Post)
